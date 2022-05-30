@@ -1,0 +1,35 @@
+<!--
+  ~ Copyright (c) GS Retail.
+  ~ All rights reserved.
+  ~ 모든 권한은 GS리테일에 있으며,
+  ~ GS리테일의 허락없이 소스 및 이진형식을 재배포, 사용하는 행위를 금지합니다.
+  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/search/v1/totalSearch" method="POST">
+
+    검색어   : <input type="text" name="query" value=""><br>
+
+    검색필드 : <input type="text" name="searchField" value=""><br>
+
+    시작번호 : <input type="text" name="startCount" value=""><br>
+    종료번호 : <input type="text" name="endCount" value=""><br>
+
+
+
+    태그 : <input type="text" name="tag" value=""><br>
+    할인태그 : <input type="text" name="discountTag" value=""><br>
+    매진구분 : <input type="text" name="soldOutSp" value=""><br>
+    재고체크여부 : <input type="text" name="stockCheckYn" value=""><br>
+
+
+    <input type="submit" value="전송버튼">
+</form>
+</body>
+</html>

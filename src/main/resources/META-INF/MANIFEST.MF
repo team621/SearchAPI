@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: com.gsretail.gst.b2e.search.SearchApplication
+
