@@ -31,17 +31,25 @@ public class Search {
     private String searchField;
     private String startDate;
     private String endDate;
+    private String serviceCode;
     private String tag;
     private String discountTag;
+    private String serviceTag;
+    private String wine25ItemKindName;
+    private String wine25RegionSpName;
+    private String itemCode;
+    private String cardDiscountName;
+    private String cardDiscountYn;
+    private String adultYn;
     private String soldOutSp;
+    private String deliverySp;
     private String stockCheckYn;
+    private String recommendItemYn;
     private String maxSellPrice;
     private String minSellPrice;
     private String categoryId;
-    private String cardDiscountYn;
-    private String adultYn;
     private String typoSearch;
-    private String recommendItemYn;
+    private String categoryField;
 
     public Search() {}
 
@@ -59,17 +67,52 @@ public class Search {
         this.searchField = nullCheckJsonParameter(jsonObj, "searchField", "ALL");
         this.startDate = nullCheckJsonParameter(jsonObj, "startDate", "1970/01/01");
         this.endDate = nullCheckJsonParameter(jsonObj, "endDate", todayStr);
+        this.serviceCode = nullCheckJsonParameter(jsonObj, "serviceCode", "");
         this.tag = nullCheckJsonParameter(jsonObj, "tag", "");
         this.discountTag = nullCheckJsonParameter(jsonObj, "discountTag", "");
-        this.soldOutSp = nullCheckJsonParameter(jsonObj, "soldOutSeparateCode", "");
+        this.serviceTag = nullCheckJsonParameter(jsonObj, "serviceTag", "");
+        this.wine25ItemKindName = nullCheckJsonParameter(jsonObj, "wine25ItemKindName", "");
+        this.wine25RegionSpName = nullCheckJsonParameter(jsonObj, "wine25RegionSpName", "");
+        this.itemCode = nullCheckJsonParameter(jsonObj, "itemCode", "");
+        this.cardDiscountName = nullCheckJsonParameter(jsonObj, "cardDiscountName", "");
+        this.cardDiscountYn = nullCheckJsonParameter(jsonObj, "cardDiscountYn", "");
+        this.adultYn = nullCheckJsonParameter(jsonObj, "adultYn", "");
+        this.soldOutSp = nullCheckJsonParameter(jsonObj, "soldOutSp", "");
+        this.deliverySp = nullCheckJsonParameter(jsonObj, "deliverySp", "");
         this.stockCheckYn = nullCheckJsonParameter(jsonObj, "stockCheckYn","");
+        this.recommendItemYn = nullCheckJsonParameter(jsonObj, "recommendItemYn", "");
         this.maxSellPrice = nullCheckJsonParameter(jsonObj, "maxSellPrice", "9999999");
         this.minSellPrice = nullCheckJsonParameter(jsonObj, "minSellPrice", "0");
         this.categoryId = nullCheckJsonParameter(jsonObj, "categoryId", "");
-        this.cardDiscountYn = nullCheckJsonParameter(jsonObj, "cardDiscountYn", "");
-        this.adultYn = nullCheckJsonParameter(jsonObj, "adultYn", "");
         this.typoSearch = nullCheckJsonParameter(jsonObj, "typoSearch", "N");
-        this.recommendItemYn = nullCheckJsonParameter(jsonObj, "recommendItemYn", "");
+    }
+
+    /**
+     * get arrays
+     *
+     * @param value the value
+     * @return the string [ ]
+     */
+    public String[] getArrays(String value){
+        String[] arrays = value.split(",");
+        return arrays;
+    }
+
+    /**
+     * Null check json parameter string.
+     *
+     * @param jsonObj       the json obj
+     * @param parameterName the parameter name
+     * @param defaultValue  the default value
+     * @return the string
+     */
+    public String nullCheckJsonParameter(JSONObject jsonObj, String parameterName, String defaultValue){
+        String parameterResult = "";
+
+        parameterResult = jsonObj.get(parameterName) == null ? defaultValue : (String)jsonObj.get(parameterName);
+        if(parameterResult.equals("")) parameterResult = defaultValue;
+
+        return parameterResult;
     }
 
     public String getQuery() {
@@ -144,6 +187,14 @@ public class Search {
         this.endDate = endDate;
     }
 
+    public String getServiceCode() {
+        return serviceCode;
+    }
+
+    public void setServiceCode(String serviceCode) {
+        this.serviceCode = serviceCode;
+    }
+
     public String getTag() {
         return tag;
     }
@@ -160,6 +211,62 @@ public class Search {
         this.discountTag = discountTag;
     }
 
+    public String getServiceTag() {
+        return serviceTag;
+    }
+
+    public void setServiceTag(String serviceTag) {
+        this.serviceTag = serviceTag;
+    }
+
+    public String getWine25ItemKindName() {
+        return wine25ItemKindName;
+    }
+
+    public void setWine25ItemKindName(String wine25ItemKindName) {
+        this.wine25ItemKindName = wine25ItemKindName;
+    }
+
+    public String getWine25RegionSpName() {
+        return wine25RegionSpName;
+    }
+
+    public void setWine25RegionSpName(String wine25RegionSpName) {
+        this.wine25RegionSpName = wine25RegionSpName;
+    }
+
+    public String getItemCode() {
+        return itemCode;
+    }
+
+    public void setItemCode(String itemCode) {
+        this.itemCode = itemCode;
+    }
+
+    public String getCardDiscountName() {
+        return cardDiscountName;
+    }
+
+    public void setCardDiscountName(String cardDiscountName) {
+        this.cardDiscountName = cardDiscountName;
+    }
+
+    public String getCardDiscountYn() {
+        return cardDiscountYn;
+    }
+
+    public void setCardDiscountYn(String cardDiscountYn) {
+        this.cardDiscountYn = cardDiscountYn;
+    }
+
+    public String getAdultYn() {
+        return adultYn;
+    }
+
+    public void setAdultYn(String adultYn) {
+        this.adultYn = adultYn;
+    }
+
     public String getSoldOutSp() {
         return soldOutSp;
     }
@@ -168,12 +275,28 @@ public class Search {
         this.soldOutSp = soldOutSp;
     }
 
+    public String getDeliverySp() {
+        return deliverySp;
+    }
+
+    public void setDeliverySp(String deliverySp) {
+        this.deliverySp = deliverySp;
+    }
+
     public String getStockCheckYn() {
         return stockCheckYn;
     }
 
     public void setStockCheckYn(String stockCheckYn) {
         this.stockCheckYn = stockCheckYn;
+    }
+
+    public String getRecommendItemYn() {
+        return recommendItemYn;
+    }
+
+    public void setRecommendItemYn(String recommendItemYn) {
+        this.recommendItemYn = recommendItemYn;
     }
 
     public String getMaxSellPrice() {
@@ -200,51 +323,19 @@ public class Search {
         this.categoryId = categoryId;
     }
 
-    public String getCardDiscountYn() { return cardDiscountYn; }
-
-    public void setCardDiscountYn(String cardDiscountYn) { this.cardDiscountYn = cardDiscountYn; }
-
-    public String getAdultYn() { return adultYn; }
-
-    public void setAdultYn(String adultYn) { this.adultYn = adultYn; }
-
-    public String getTypoSearch() { return typoSearch; }
-
-    public void setTypoSearch(String typoSearch) { this.typoSearch = typoSearch; }
-
-    public String getRecommendItemYn() {
-        return recommendItemYn;
+    public String getTypoSearch() {
+        return typoSearch;
     }
 
-    public void setRecommendItemYn(String recommendItemYn) {
-        this.recommendItemYn = recommendItemYn;
+    public void setTypoSearch(String typoSearch) {
+        this.typoSearch = typoSearch;
     }
 
-    /**
-     * get arrays
-     *
-     * @param value the value
-     * @return the string [ ]
-     */
-    public String[] getArrays(String value){
-        String[] arrays = value.split(",");
-        return arrays;
+    public String getCategoryField() {
+        return categoryField;
     }
 
-    /**
-     * Null check json parameter string.
-     *
-     * @param jsonObj       the json obj
-     * @param parameterName the parameter name
-     * @param defaultValue  the default value
-     * @return the string
-     */
-    public String nullCheckJsonParameter(JSONObject jsonObj, String parameterName, String defaultValue){
-        String parameterResult = "";
-
-        parameterResult = jsonObj.get(parameterName) == null ? defaultValue : (String)jsonObj.get(parameterName);
-        if(parameterResult.equals("")) parameterResult = defaultValue;
-
-        return parameterResult;
+    public void setCategoryField(String categoryField) {
+        this.categoryField = categoryField;
     }
 }

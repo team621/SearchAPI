@@ -49,7 +49,7 @@ public class SearchServiceImpl implements SearchService{
 
         //SF-1 검색엔진 검색 객체 생성
         QueryAPI530.Search wnSearch = new QueryAPI530.Search();
-        
+
         //컬렉션이 ALL 일 경우 전체 컬렉션으로 설정
         setCollectionInfoValue(search, "", "COLLECTION", properties);
 
@@ -59,8 +59,6 @@ public class SearchServiceImpl implements SearchService{
         //검색 필드 체크 (ALL or 빈 값 확인)
         Boolean hasSearchField = true;
         if(search.getSearchField().equals("") || search.getSearchField().equals("ALL")) hasSearchField = false;
-
-
 
         for(int i=0; i<collections.length; i++) {
             JSONObject documentset = new JSONObject();
@@ -74,15 +72,23 @@ public class SearchServiceImpl implements SearchService{
             //전체 컬렉션의 총 검색 건수
             allTotalCount += totalCount;
 
+/*            int depth = 1;
+            int groupCount = wnSearch.w3GetCategoryCount( collections[i], "categoryName", depth );
+            System.out.println("groupCount = " + groupCount);
+
+            for(int j=0; j<groupCount; j++){
+                System.out.println("catename : " + wnSearch.w3GetCategoryName(collections[i], "categoryName", depth, j) +" ("+wnSearch.w3GetDocumentCountInCategory(collections[i], "categoryName", depth, j)+")");
+            }*/
+
             JSONObject countJsonObject = new JSONObject();
             countJsonObject.put("resultCount",resultCount);
             countJsonObject.put("totalCount",totalCount);
 
             JSONArray documentJsonArray = new JSONArray();
-            
+
             //출력필드 리스트(배열) 구하기
             String[] documentFields = search.getArrays(search.getDocumentField());
-            
+
             //검색 결과
             for(int j=0; j<resultCount; j++){
                 JSONObject searchResultJsonObject = new JSONObject();
@@ -118,15 +124,16 @@ public class SearchServiceImpl implements SearchService{
             //오타 검색어(기존 검색어) 저장
             typoQuery = search.getQuery();
             //검색어 (오타 → 정타 추천) 수정
-            search.setQuery(suggestedQuery);
-            //오타 검색어에 대한 검색 결과 호출
-            //정타 추천으로도 검색 결과가 없을 경우를 위해 전체 검색 결과 수 초기화
-            allTotalCount = 0;
-            JSONObject searchResultJsonTemp = getSearchResult(search);
-            if(allTotalCount > 0)  searchResultJson = searchResultJsonTemp;
-        }
+            //search.setQuery(suggestedQuery);
 
-        SearchQueryResultJson.put("typoQuery", typoQuery);
+            //JSONObject searchResultJsonTemp = getSearchResult(search);
+            //if(allTotalCount > 0)  searchResultJson = searchResultJsonTemp;
+        }
+        //오타 검색어에 대한 검색 결과 호출
+        //정타 추천으로도 검색 결과가 없을 경우를 위해 전체 검색 결과 수 초기화
+        allTotalCount = 0;
+
+        //SearchQueryResultJson.put("typoQuery", typoQuery);
         //오타 검색어 초기화
         typoQuery = "";
 
@@ -175,6 +182,8 @@ public class SearchServiceImpl implements SearchService{
             search.setDocumentField(properties.getProperty(collection.toUpperCase() + ".DOCUMENTFIELD"));
         }else if(flag.equals("SEARCHFIELD")){
             search.setSearchField(properties.getProperty(collection.toUpperCase() + ".SEARCHFIELD"));
+        }else if(flag.equals("CATEGORY")){
+            search.setCategoryField(properties.getProperty(collection.toUpperCase() + ".CATEGORY"));
         }
     }
 
@@ -207,16 +216,26 @@ public class SearchServiceImpl implements SearchService{
         String exquery = setExquery(search);
         if(!exquery.equals("")) ret = wnSearch.w3SetPrefixQuery(collection,exquery,1);
         ret = wnSearch.w3SetFilterQuery(collection,"<sellPrice:gt:"+search.getMinSellPrice()+"> <sellPrice:lt:"+search.getMaxSellPrice()+">");
+        //CATEGORY
+        setCollectionInfoValue(search, collection, "CATEGORY", properties);
+        //카테고리 없을 경우 조건?
+        String[] categories = search.getCategoryField().split("#");
+        for (String category : categories) {
+            ret = wnSearch.w3AddCategoryGroupBy(collection, category.split("\\|")[0], category.split("\\|")[1]);
+        }
+        String categoryId = search.getCategoryId();
+        if(!categoryId.equals("")) ret = wnSearch.w3AddCategoryQuery(collection, "categoryId", categoryId);
 
         ret = wnSearch.w3SetSortField(collection, search.getSort());
         ret = wnSearch.w3SetQueryAnalyzer(collection, 1, 1, 1, 1 );
         ret = wnSearch.w3ReceiveSearchQueryResult(3 );
-
-        System.out.println("wnSearch = " + wnSearch.w3GetErrorInfo());
     }
 
     public String setExquery(Search search){
         String exquery = "";
+
+        String serviceCode = search.getServiceCode();
+        if(!serviceCode.equals("")) exquery += mkExqueryString(serviceCode, "serviceCode");
 
         String tag = search.getTag();
         if(!tag.equals("")) exquery += mkExqueryString(tag, "tag");
@@ -224,20 +243,32 @@ public class SearchServiceImpl implements SearchService{
         String discountTag = search.getDiscountTag();
         if(!discountTag.equals("")) exquery += mkExqueryString(discountTag, "discountTag");
 
-        String soldOutSeparateCode = search.getSoldOutSp();
-        if(!soldOutSeparateCode.equals("")) exquery += mkExqueryString(soldOutSeparateCode, "soldOutSeparateCode");
+        String serviceTag = search.getServiceTag();
+        if(!serviceTag.equals("")) exquery += mkExqueryString(serviceTag, "serviceTag");
 
-        String stockCheckYn = search.getStockCheckYn();
-        if(!stockCheckYn.equals("")) exquery += mkExqueryString(stockCheckYn, "stockCheckYn");
+        String wine25ItemKindName = search.getWine25ItemKindName();
+        if(!wine25ItemKindName.equals("")) exquery += mkExqueryString(wine25ItemKindName,"wine25ItemKindName");
 
-        String categoryId = search.getCategoryId();
-        if(!categoryId.equals("")) exquery += mkExqueryString(categoryId, "categoryId");
+        String wine25RegionSpName = search.getWine25RegionSpName();
+        if(!wine25RegionSpName.equals("")) exquery += mkExqueryString(wine25RegionSpName, "wine25RegionSpName");
+
+        String cardDiscountName = search.getCardDiscountName();
+        if(!cardDiscountName.equals("")) exquery += mkExqueryString(cardDiscountName,"cardDiscountName");
 
         String cardDiscountYn = search.getCardDiscountYn();
         if(!cardDiscountYn.equals("")) exquery += mkExqueryString(cardDiscountYn, "cardDiscountYn");
 
         String adultYn = search.getAdultYn();
         if(!adultYn.equals("")) exquery += mkExqueryString(adultYn, "adultYn");
+
+        String soldOutSp = search.getSoldOutSp();
+        if(!soldOutSp.equals("")) exquery += mkExqueryString(soldOutSp, "soldOutSp");
+
+        String deliverySp = search.getDeliverySp();
+        if(!deliverySp.equals("")) exquery += mkExqueryString(deliverySp, "deliverySp");
+
+        String stockCheckYn = search.getStockCheckYn();
+        if(!stockCheckYn.equals("")) exquery += mkExqueryString(stockCheckYn, "stockCheckYn");
 
         String recommendItemYn = search.getRecommendItemYn();
         if(!recommendItemYn.equals("")) exquery += mkExqueryString(recommendItemYn, "recommendItemYn");
