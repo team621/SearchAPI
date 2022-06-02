@@ -78,61 +78,8 @@ public class SearchServiceImpl implements SearchService{
         //검색 수행
         wnSearch.w3ReceiveSearchQueryResult(3 );
 
-        //검색 결과 리턴 값 세팅 (JSON)
-        for(int i=0; i<collections.length; i++) {
-            JSONObject documentset = new JSONObject();
-
-            int resultCount = 0;
-            int totalCount = 0;
-
-            //수정필요
-            if(collections[i].equals("oneplus_test")){
-                resultCount = wnSearch.w3GetResultCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultCount(collections[i]);
-                totalCount =  wnSearch.w3GetResultTotalCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultTotalCount(collections[i]);
-            }else if(collections[i].equals("thefresh_test")){
-                resultCount = wnSearch.w3GetResultGroupCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultGroupCount(collections[i]);
-                totalCount = wnSearch.w3GetResultTotalGroupCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultTotalGroupCount(collections[i]);
-            }
-
-            //전체 컬렉션의 총 검색 건수
-            allTotalCount += totalCount;
-
-            JSONObject countJsonObject = new JSONObject();
-            countJsonObject.put("resultCount",resultCount);
-            countJsonObject.put("totalCount",totalCount);
-
-            JSONArray documentJsonArray = new JSONArray();
-
-            //출력필드 리스트(배열) 구하기
-            String[] documentFields = search.getArrays(search.getDocumentField());
-
-            //검색 결과
-            for(int j=0; j<resultCount; j++){
-                JSONObject searchResultJsonObject = new JSONObject();
-                searchResultJsonObject.put("collectionId",collections[i]);
-                JSONObject fieldJsonObject = new JSONObject();
-
-                for (String documentField : documentFields) {
-                    fieldJsonObject.put(documentField,wnSearch.w3GetFieldInGroup(collections[i], documentField,j, 0));
-                }
-
-                searchResultJsonObject.put("field",fieldJsonObject);
-
-                documentJsonArray.add(searchResultJsonObject);
-            }
-
-            countJsonObject.put("Document",documentJsonArray);
-
-            documentset.put("id",collections[i]);
-
-            documentset.put("Documentset",countJsonObject);
-
-            collectionJsonArray.add(documentset);
-        }//end for (collections)
-
-        SearchQueryResultJson.put("Collection", collectionJsonArray);
-
-        searchResultJson.put("SearchQueryResult",SearchQueryResultJson);
+        //검색결과 생성
+        setSearchResult(collections , wnSearch , search , collectionJsonArray , searchResultJson , SearchQueryResultJson);
 
         //오타에 대한 정타 추천 검색어
         String typoSearch = search.getTypoSearch();
@@ -231,6 +178,15 @@ public class SearchServiceImpl implements SearchService{
         else System.out.println("Collection setting Fail");
     }
 
+    /**
+     * Set store code search.
+     *
+     * @param wnSearch       search 객체
+     * @param search         parameter 객체
+     * @param properties     the properties
+     * @param collection     컬렉션 정보
+     * @param hasSearchField 검색 필드 체크값
+     */
     public void setStoreCodeSearch(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField){
         int ret = 0;
 
@@ -266,6 +222,17 @@ public class SearchServiceImpl implements SearchService{
         System.out.println(search.getStoreCode());
     }
 
+    /**
+     * search collection info setting
+     *
+     * @param wnSearch       search 객체
+     * @param search         parameter 객체
+     * @param properties     the properties
+     * @param collection     컬렉션 정보
+     * @param hasSearchField 검색 필드 체크값
+     * @param resultCount    결과값
+     * @return the int
+     */
     public int setCollectioInfoSetting(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField , int resultCount){
         int ret = 0;
         ret += wnSearch.w3AddCollection(collection);
@@ -297,6 +264,77 @@ public class SearchServiceImpl implements SearchService{
         ret += wnSearch.w3SetQueryAnalyzer(collection, 1, 1, 1, 1 );
 
         return ret;
+    }
+
+    /**
+     * 검색결과 생성
+     * @param collections           컬렉션 정보
+     * @param wnSearch              검색객체
+     * @param search                파라미터 객체
+     * @param collectionJsonArray
+     * @param searchResultJson
+     * @param SearchQueryResultJson
+     */
+    public void setSearchResult(String[] collections , QueryAPI530.Search wnSearch , Search search , JSONArray collectionJsonArray , JSONObject searchResultJson , JSONObject SearchQueryResultJson){
+        System.out.println("test");
+        //검색 결과 리턴 값 세팅 (JSON)
+        for(int i=0; i<collections.length; i++) {
+            System.out.println("test" + i);
+            JSONObject documentset = new JSONObject();
+
+            int resultCount = 0;
+            int totalCount = 0;
+
+            //수정필요
+            if(collections[i].equals("oneplus_test")){
+                resultCount = wnSearch.w3GetResultCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultCount(collections[i]);
+                totalCount =  wnSearch.w3GetResultTotalCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultTotalCount(collections[i]);
+            }else if(collections[i].equals("thefresh_test")){
+                resultCount = wnSearch.w3GetResultGroupCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultGroupCount(collections[i]);
+                totalCount = wnSearch.w3GetResultTotalGroupCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultTotalGroupCount(collections[i]);
+            }
+
+            //전체 컬렉션의 총 검색 건수
+            allTotalCount += totalCount;
+
+            JSONObject countJsonObject = new JSONObject();
+            countJsonObject.put("resultCount",resultCount);
+            countJsonObject.put("totalCount",totalCount);
+
+            JSONArray documentJsonArray = new JSONArray();
+
+            //출력필드 리스트(배열) 구하기
+            String[] documentFields = search.getArrays(search.getDocumentField());
+
+            //검색 결과
+            for(int j=0; j<resultCount; j++){
+                JSONObject searchResultJsonObject = new JSONObject();
+                searchResultJsonObject.put("collectionId",collections[i]);
+                JSONObject fieldJsonObject = new JSONObject();
+
+                for (String documentField : documentFields) {
+                    fieldJsonObject.put(documentField,wnSearch.w3GetFieldInGroup(collections[i], documentField,j, 0));
+                }
+
+                searchResultJsonObject.put("field",fieldJsonObject);
+
+                documentJsonArray.add(searchResultJsonObject);
+            }
+
+            countJsonObject.put("Document",documentJsonArray);
+
+            documentset.put("id",collections[i]);
+
+            documentset.put("selectStoreCode",search.getStoreCode());
+
+            documentset.put("Documentset",countJsonObject);
+
+            collectionJsonArray.add(documentset);
+        }//end for (collections)
+
+        SearchQueryResultJson.put("Collection", collectionJsonArray);
+
+        searchResultJson.put("SearchQueryResult",SearchQueryResultJson);
     }
 
     public String setExquery(Search search){
