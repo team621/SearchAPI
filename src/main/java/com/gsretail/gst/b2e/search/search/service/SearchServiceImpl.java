@@ -88,11 +88,11 @@ public class SearchServiceImpl implements SearchService{
             //검색어 (오타 → 정타 추천) 수정
             search.setQuery(suggestedQuery);
 
-            JSONObject searchResultJsonTemp = getSearchResult(search);
+            //JSONObject searchResultJsonTemp = getSearchResult(search);
 
-            if(allTotalCount > 0)  searchResultJson = searchResultJsonTemp;
+            //if(allTotalCount > 0)  searchResultJson = searchResultJsonTemp;
         }
-        SearchQueryResultJson.put("typoQuery", typoQuery);
+        //SearchQueryResultJson.put("typoQuery", typoQuery);
         //오타 검색어 초기화
         typoQuery = "";
 
