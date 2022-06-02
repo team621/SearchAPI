@@ -106,6 +106,60 @@ public class SearchServiceImpl implements SearchService{
         return searchResultJson;
     }//end getSearchResult
 
+    public JSONObject getStoreSearchResult(Search search){
+        //정타 추천으로도 검색 결과가 없을 경우를 위해 전체 검색 결과 수 초기화
+        allTotalCount = 0;
+
+        //검색 결과 return json 객체
+        JSONObject searchResultJson = new JSONObject();
+        JSONObject SearchQueryResultJson = new JSONObject();
+        JSONArray collectionJsonArray = new JSONArray();
+
+        SearchQueryResultJson.put("query",search.getQuery());
+        SearchQueryResultJson.put("Version","5.3.0");
+
+        //검색엔진 설정 프로퍼티 파일 생성
+        Properties properties = getProperties();
+
+        //SF-1 검색엔진 검색 객체 생성
+        QueryAPI530.Search wnSearch = new QueryAPI530.Search();
+        int ret = 0;
+        ret = wnSearch.w3SetCodePage("UTF-8");
+        ret = wnSearch.w3SetCommonQuery(search.getQuery(),0);
+        ret = wnSearch.w3ConnectServer(properties.getProperty("SEARCH_IP"), Integer.parseInt(properties.getProperty("SEARCH_PORT")), Integer.parseInt(properties.getProperty("SEARCH_TIMEOUT")));
+
+        //컬렉션이 ALL 일 경우 전체 컬렉션으로 설정
+        setCollectionInfoValue(search, "", "COLLECTION", properties);
+
+        //컬렉션 리스트(배열) 구하기
+        String[] collections = search.getArrays(search.getCollection());
+
+        //검색 필드 체크 (ALL or 빈 값 확인)
+        Boolean hasSearchField = true;
+        if(search.getSearchField().equals("") || search.getSearchField().equals("ALL")) hasSearchField = false;
+
+        //검색 컬렉션 설정
+        for(int i=0; i<collections.length; i++) {
+            //상품이 있는 매장 코드 검색
+            ret += setStoreCodeSearch(wnSearch,search,properties,collections[i],hasSearchField);
+            //위에서 생성된 매장코드로 해당 매장 상품 검색
+            ret += setTotalSearch(wnSearch,search,properties,collections[i],hasSearchField);
+        }
+
+        //검색 수행
+        ret += wnSearch.w3ReceiveSearchQueryResult(3 );
+
+        if(ret == 0) System.out.println("Search Success");
+        else System.out.println("Search Fail");
+
+        //검색결과 생성
+        setSearchResult(collections , wnSearch , search , collectionJsonArray , searchResultJson , SearchQueryResultJson);
+
+        wnSearch.w3CloseServer();
+
+        return searchResultJson;
+    }//end getSearchResult
+
     /**
      * 프로퍼티 파일 호출
      *
@@ -160,7 +214,7 @@ public class SearchServiceImpl implements SearchService{
      * @param collection     컬렉션 명
      * @param hasSearchField 검색필드 (전체,빈값 / 특정 검색필드) 구분
      */
-    public void setTotalSearch(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField){
+    public int setTotalSearch(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField){
         int ret = 0;
         ret += setCollectioInfoSetting(wnSearch , search , properties , collection , hasSearchField , search.getListCount());
 
@@ -172,10 +226,9 @@ public class SearchServiceImpl implements SearchService{
         //prefix query
         String exquery = setExquery(search);
         if(!exquery.equals("")) ret = wnSearch.w3SetPrefixQuery(collection,exquery,1);
-        ret = wnSearch.w3SetFilterQuery(collection,"<sellPrice:gt:"+search.getMinSellPrice()+"> <sellPrice:lt:"+search.getMaxSellPrice()+">");
+        ret += wnSearch.w3SetFilterQuery(collection,"<sellPrice:gt:"+search.getMinSellPrice()+"> <sellPrice:lt:"+search.getMaxSellPrice()+">");
 
-        if(ret == 0) System.out.println("Collection Setting Success");
-        else System.out.println("Collection setting Fail");
+        return ret;
     }
 
     /**
@@ -187,11 +240,11 @@ public class SearchServiceImpl implements SearchService{
      * @param collection     컬렉션 정보
      * @param hasSearchField 검색 필드 체크값
      */
-    public void setStoreCodeSearch(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField){
+    public int setStoreCodeSearch(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField){
         int ret = 0;
 
         //검색엔진 기본 설정
-        setCollectioInfoSetting(wnSearch , search , properties , collection , hasSearchField , search.getStoreCount());
+        ret += setCollectioInfoSetting(wnSearch , search , properties , collection , hasSearchField , search.getStoreCount() * 2);
 
         //prefix query
         String exquery = "";
@@ -204,10 +257,10 @@ public class SearchServiceImpl implements SearchService{
         }
 
         if(!"".equals(exquery)){
-            ret = wnSearch.w3SetPrefixQuery(collection,exquery,1);
+            ret += wnSearch.w3SetPrefixQuery(collection,exquery,1);
         }
 
-        ret = wnSearch.w3ReceiveSearchQueryResult(2 );
+        ret += wnSearch.w3ReceiveSearchQueryResult(2 );
 
         int resultCount = wnSearch.w3GetResultCount(collection);
         String storeCode = "";
@@ -219,7 +272,8 @@ public class SearchServiceImpl implements SearchService{
             }
         }
         search.setStoreCode(storeCode);
-        System.out.println(search.getStoreCode());
+
+        return ret;
     }
 
     /**
@@ -276,10 +330,8 @@ public class SearchServiceImpl implements SearchService{
      * @param SearchQueryResultJson
      */
     public void setSearchResult(String[] collections , QueryAPI530.Search wnSearch , Search search , JSONArray collectionJsonArray , JSONObject searchResultJson , JSONObject SearchQueryResultJson){
-        System.out.println("test");
         //검색 결과 리턴 값 세팅 (JSON)
         for(int i=0; i<collections.length; i++) {
-            System.out.println("test" + i);
             JSONObject documentset = new JSONObject();
 
             int resultCount = 0;
