@@ -206,13 +206,14 @@ public class SearchServiceImpl implements SearchService{
     }
 
     /**
-     * 검색엔진 설정
+     * 통합검색 설정
      *
      * @param wnSearch       검색엔진 설정 전용 객체
      * @param search         검색 객체
      * @param properties     검색엔진 설정 프로퍼티 파일
      * @param collection     컬렉션 명
      * @param hasSearchField 검색필드 (전체,빈값 / 특정 검색필드) 구분
+     * @return int ret       정상 적용 여부 (0 : 정상 , 이외 : error)
      */
     public int setTotalSearch(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField){
         int ret = 0;
@@ -238,7 +239,8 @@ public class SearchServiceImpl implements SearchService{
      * @param search         parameter 객체
      * @param properties     the properties
      * @param collection     컬렉션 정보
-     * @param hasSearchField 검색 필드 체크값
+     * @param hasSearchField 검색필드 (전체,빈값 / 특정 검색필드) 구분
+     * @return int ret       정상 적용 여부 (0 : 정상 , 이외 : error)
      */
     public int setStoreCodeSearch(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField){
         int ret = 0;
@@ -283,14 +285,14 @@ public class SearchServiceImpl implements SearchService{
      * @param search         parameter 객체
      * @param properties     the properties
      * @param collection     컬렉션 정보
-     * @param hasSearchField 검색 필드 체크값
-     * @param resultCount    결과값
-     * @return the int
+     * @param hasSearchField 검색필드 (전체,빈값 / 특정 검색필드) 구분
+     * @param resultCount    검색결과 갯수
+     * @return int ret       정상 적용 여부 (0 : 정상 , 이외 : error)
      */
     public int setCollectioInfoSetting(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField , int resultCount){
         int ret = 0;
         ret += wnSearch.w3AddCollection(collection);
-        ret += wnSearch.w3SetPageInfo(collection, search.getStartCount(), search.getListCount());
+        ret += wnSearch.w3SetPageInfo(collection, search.getStartCount(), resultCount);
         ret += wnSearch.w3SetDateRange(collection, search.getStartDate(), search.getEndDate());
         ret += wnSearch.w3SetSpellCorrectionQuery(search.getQuery(),1);
 
