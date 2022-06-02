@@ -27,13 +27,15 @@ import java.util.Properties;
  */
 @Service
 public class SearchServiceImpl implements SearchService{
-
     //기존 검색어 (오타 검색)
     String typoQuery = "";
     //오타검색을 위한 전체 검색 결과 카운트
     int allTotalCount = 0;
 
     public JSONObject getSearchResult(Search search){
+        //정타 추천으로도 검색 결과가 없을 경우를 위해 전체 검색 결과 수 초기화
+        allTotalCount = 0;
+
         //검색 결과 return json 객체
         JSONObject searchResultJson = new JSONObject();
         JSONObject SearchQueryResultJson = new JSONObject();
@@ -127,17 +129,15 @@ public class SearchServiceImpl implements SearchService{
         if(allTotalCount <= 0 && !suggestedQuery.equals("") && typoSearch.equals("N")) {
             //오타 검색어(기존 검색어) 저장
             typoQuery = search.getQuery();
+
             //검색어 (오타 → 정타 추천) 수정
-            //search.setQuery(suggestedQuery);
+            search.setQuery(suggestedQuery);
 
-            //JSONObject searchResultJsonTemp = getSearchResult(search);
-            //if(allTotalCount > 0)  searchResultJson = searchResultJsonTemp;
+            JSONObject searchResultJsonTemp = getSearchResult(search);
+
+            if(allTotalCount > 0)  searchResultJson = searchResultJsonTemp;
         }
-        //오타 검색어에 대한 검색 결과 호출
-        //정타 추천으로도 검색 결과가 없을 경우를 위해 전체 검색 결과 수 초기화
-        allTotalCount = 0;
-
-        //SearchQueryResultJson.put("typoQuery", typoQuery);
+        SearchQueryResultJson.put("typoQuery", typoQuery);
         //오타 검색어 초기화
         typoQuery = "";
 
@@ -230,12 +230,12 @@ public class SearchServiceImpl implements SearchService{
         String categoryId = search.getCategoryId();
         if(!categoryId.equals("")) ret = wnSearch.w3AddCategoryQuery(collection, "categoryId", categoryId);
 
-        ret = wnSearch.w3SetSortField(collection, search.getSort());
+        ret = wnSearch.w3SetSortField(collection, search.getSort()+",exposureSeq/DESC");
 
         if(collection.equals("thefresh")){
             ret = wnSearch.w3SetGroupBy(collection, "supermarketItemCode",1);
+            ret = wnSearch.w3SetSortFieldInGroup(collection, search.getSort()+",exposureSeq/DESC");
         }
-        ret = wnSearch.w3SetSortFieldInGroup(collection, "RANK/DESC");
         ret = wnSearch.w3SetQueryAnalyzer(collection, 1, 1, 1, 1 );
     }
 
