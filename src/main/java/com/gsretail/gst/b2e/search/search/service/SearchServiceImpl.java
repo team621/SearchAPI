@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileReader;
 import java.net.InetAddress;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Properties;
 
 /**
@@ -29,13 +27,15 @@ import java.util.Properties;
  */
 @Service
 public class SearchServiceImpl implements SearchService{
-
     //기존 검색어 (오타 검색)
     String typoQuery = "";
     //오타검색을 위한 전체 검색 결과 카운트
     int allTotalCount = 0;
 
     public JSONObject getSearchResult(Search search){
+        //정타 추천으로도 검색 결과가 없을 경우를 위해 전체 검색 결과 수 초기화
+        allTotalCount = 0;
+
         //검색 결과 return json 객체
         JSONObject searchResultJson = new JSONObject();
         JSONObject SearchQueryResultJson = new JSONObject();
@@ -60,25 +60,29 @@ public class SearchServiceImpl implements SearchService{
         Boolean hasSearchField = true;
         if(search.getSearchField().equals("") || search.getSearchField().equals("ALL")) hasSearchField = false;
 
+        //검색엔진 설정
+        for(int i=0; i<collections.length; i++) setSearchEngine(wnSearch,search,properties,collections[i],hasSearchField);
+
+        //검색 수행
+        wnSearch.w3ReceiveSearchQueryResult(3 );
+
+        //검색 결과 리턴 값 세팅 (JSON)
         for(int i=0; i<collections.length; i++) {
             JSONObject documentset = new JSONObject();
 
-            //검색엔진 설정
-            setSearchEngine(wnSearch,search,properties,collections[i],hasSearchField);
+            int resultCount = 0;
+            int totalCount = 0;
 
-            int totalCount = wnSearch.w3GetResultTotalCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultTotalCount(collections[i]);
-            int resultCount = wnSearch.w3GetResultCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultCount(collections[i]);
+            if(collections[i].equals("oneplus")){
+                resultCount = wnSearch.w3GetResultCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultCount(collections[i]);
+                totalCount =  wnSearch.w3GetResultTotalCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultTotalCount(collections[i]);
+            }else if(collections[i].equals("thefresh")){
+                resultCount = wnSearch.w3GetResultGroupCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultGroupCount(collections[i]);
+                totalCount = wnSearch.w3GetResultTotalGroupCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultTotalGroupCount(collections[i]);
+            }
 
             //전체 컬렉션의 총 검색 건수
             allTotalCount += totalCount;
-
-/*            int depth = 1;
-            int groupCount = wnSearch.w3GetCategoryCount( collections[i], "categoryName", depth );
-            System.out.println("groupCount = " + groupCount);
-
-            for(int j=0; j<groupCount; j++){
-                System.out.println("catename : " + wnSearch.w3GetCategoryName(collections[i], "categoryName", depth, j) +" ("+wnSearch.w3GetDocumentCountInCategory(collections[i], "categoryName", depth, j)+")");
-            }*/
 
             JSONObject countJsonObject = new JSONObject();
             countJsonObject.put("resultCount",resultCount);
@@ -95,7 +99,9 @@ public class SearchServiceImpl implements SearchService{
                 searchResultJsonObject.put("collectionId",collections[i]);
                 JSONObject fieldJsonObject = new JSONObject();
 
-                for (String documentField : documentFields) fieldJsonObject.put(documentField,wnSearch.w3GetField(collections[i], documentField,j));
+                for (String documentField : documentFields) {
+                    fieldJsonObject.put(documentField,wnSearch.w3GetFieldInGroup(collections[i], documentField,j, 0));
+                }
 
                 searchResultJsonObject.put("field",fieldJsonObject);
 
@@ -123,17 +129,15 @@ public class SearchServiceImpl implements SearchService{
         if(allTotalCount <= 0 && !suggestedQuery.equals("") && typoSearch.equals("N")) {
             //오타 검색어(기존 검색어) 저장
             typoQuery = search.getQuery();
+
             //검색어 (오타 → 정타 추천) 수정
-            //search.setQuery(suggestedQuery);
+            search.setQuery(suggestedQuery);
 
-            //JSONObject searchResultJsonTemp = getSearchResult(search);
-            //if(allTotalCount > 0)  searchResultJson = searchResultJsonTemp;
+            JSONObject searchResultJsonTemp = getSearchResult(search);
+
+            if(allTotalCount > 0)  searchResultJson = searchResultJsonTemp;
         }
-        //오타 검색어에 대한 검색 결과 호출
-        //정타 추천으로도 검색 결과가 없을 경우를 위해 전체 검색 결과 수 초기화
-        allTotalCount = 0;
-
-        //SearchQueryResultJson.put("typoQuery", typoQuery);
+        SearchQueryResultJson.put("typoQuery", typoQuery);
         //오타 검색어 초기화
         typoQuery = "";
 
@@ -226,9 +230,13 @@ public class SearchServiceImpl implements SearchService{
         String categoryId = search.getCategoryId();
         if(!categoryId.equals("")) ret = wnSearch.w3AddCategoryQuery(collection, "categoryId", categoryId);
 
-        ret = wnSearch.w3SetSortField(collection, search.getSort());
+        ret = wnSearch.w3SetSortField(collection, search.getSort()+",exposureSeq/DESC");
+
+        if(collection.equals("thefresh")){
+            ret = wnSearch.w3SetGroupBy(collection, "supermarketItemCode",1);
+            ret = wnSearch.w3SetSortFieldInGroup(collection, search.getSort()+",exposureSeq/DESC");
+        }
         ret = wnSearch.w3SetQueryAnalyzer(collection, 1, 1, 1, 1 );
-        ret = wnSearch.w3ReceiveSearchQueryResult(3 );
     }
 
     public String setExquery(Search search){
