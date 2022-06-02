@@ -47,10 +47,10 @@ public class SearchController {
     }
 
     @RequestMapping(value = "/search/v1/storeCodeSearch", method = {RequestMethod.POST, RequestMethod.GET})
-    public JSONObject getStoreCodeSearch(HttpServletRequest request){
+    public JSONObject getStoreSearchResult(HttpServletRequest request){
         Search search = setSearchParameter(request);
 
-        JSONObject searchResultJson = searchService.getSearchResult(search);
+        JSONObject searchResultJson = searchService.getStoreSearchResult(search);
 
         return searchResultJson;
     }

@@ -26,4 +26,5 @@ public interface SearchService {
      * @return 검색 결과 (JSON)
      */
     public JSONObject getSearchResult(Search search);
+    public JSONObject getStoreSearchResult(Search search);
 }
