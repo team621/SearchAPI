@@ -50,6 +50,8 @@ public class Search {
     private String categoryId;
     private String typoSearch;
     private String categoryField;
+    private String prmByQty;
+    private String prmGtQty;
 
     public Search() {}
 
@@ -337,5 +339,21 @@ public class Search {
 
     public void setCategoryField(String categoryField) {
         this.categoryField = categoryField;
+    }
+
+    public String getPrmByQty() {
+        return prmByQty;
+    }
+
+    public void setPrmByQty(String prmByQty) {
+        this.prmByQty = prmByQty;
+    }
+
+    public String getPrmGtQty() {
+        return prmGtQty;
+    }
+
+    public void setPrmGtQty(String prmGtQty) {
+        this.prmGtQty = prmGtQty;
     }
 }

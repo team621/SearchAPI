@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileReader;
 import java.net.InetAddress;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Properties;
 
 /**
@@ -60,25 +58,29 @@ public class SearchServiceImpl implements SearchService{
         Boolean hasSearchField = true;
         if(search.getSearchField().equals("") || search.getSearchField().equals("ALL")) hasSearchField = false;
 
+        //검색엔진 설정
+        for(int i=0; i<collections.length; i++) setSearchEngine(wnSearch,search,properties,collections[i],hasSearchField);
+
+        //검색 수행
+        wnSearch.w3ReceiveSearchQueryResult(3 );
+
+        //검색 결과 리턴 값 세팅 (JSON)
         for(int i=0; i<collections.length; i++) {
             JSONObject documentset = new JSONObject();
 
-            //검색엔진 설정
-            setSearchEngine(wnSearch,search,properties,collections[i],hasSearchField);
+            int resultCount = 0;
+            int totalCount = 0;
 
-            int totalCount = wnSearch.w3GetResultTotalCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultTotalCount(collections[i]);
-            int resultCount = wnSearch.w3GetResultCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultCount(collections[i]);
+            if(collections[i].equals("oneplus")){
+                resultCount = wnSearch.w3GetResultCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultCount(collections[i]);
+                totalCount =  wnSearch.w3GetResultTotalCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultTotalCount(collections[i]);
+            }else if(collections[i].equals("thefresh")){
+                resultCount = wnSearch.w3GetResultGroupCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultGroupCount(collections[i]);
+                totalCount = wnSearch.w3GetResultTotalGroupCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultTotalGroupCount(collections[i]);
+            }
 
             //전체 컬렉션의 총 검색 건수
             allTotalCount += totalCount;
-
-/*            int depth = 1;
-            int groupCount = wnSearch.w3GetCategoryCount( collections[i], "categoryName", depth );
-            System.out.println("groupCount = " + groupCount);
-
-            for(int j=0; j<groupCount; j++){
-                System.out.println("catename : " + wnSearch.w3GetCategoryName(collections[i], "categoryName", depth, j) +" ("+wnSearch.w3GetDocumentCountInCategory(collections[i], "categoryName", depth, j)+")");
-            }*/
 
             JSONObject countJsonObject = new JSONObject();
             countJsonObject.put("resultCount",resultCount);
@@ -95,7 +97,9 @@ public class SearchServiceImpl implements SearchService{
                 searchResultJsonObject.put("collectionId",collections[i]);
                 JSONObject fieldJsonObject = new JSONObject();
 
-                for (String documentField : documentFields) fieldJsonObject.put(documentField,wnSearch.w3GetField(collections[i], documentField,j));
+                for (String documentField : documentFields) {
+                    fieldJsonObject.put(documentField,wnSearch.w3GetFieldInGroup(collections[i], documentField,j, 0));
+                }
 
                 searchResultJsonObject.put("field",fieldJsonObject);
 
@@ -227,8 +231,12 @@ public class SearchServiceImpl implements SearchService{
         if(!categoryId.equals("")) ret = wnSearch.w3AddCategoryQuery(collection, "categoryId", categoryId);
 
         ret = wnSearch.w3SetSortField(collection, search.getSort());
+
+        if(collection.equals("thefresh")){
+            ret = wnSearch.w3SetGroupBy(collection, "supermarketItemCode",1);
+        }
+        ret = wnSearch.w3SetSortFieldInGroup(collection, "RANK/DESC");
         ret = wnSearch.w3SetQueryAnalyzer(collection, 1, 1, 1, 1 );
-        ret = wnSearch.w3ReceiveSearchQueryResult(3 );
     }
 
     public String setExquery(Search search){
