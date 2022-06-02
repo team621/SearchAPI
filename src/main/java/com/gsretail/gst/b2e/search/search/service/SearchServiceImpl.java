@@ -68,12 +68,7 @@ public class SearchServiceImpl implements SearchService{
         if(search.getSearchField().equals("") || search.getSearchField().equals("ALL")) hasSearchField = false;
 
         //검색엔진 설정
-        for(int i=0; i<collections.length; i++) {
-            if(!"".equals(search.getStoreCode())){
-                setStoreCodeSearch(wnSearch,search,properties,collections[i],hasSearchField);
-            }
-            setTotalSearch(wnSearch,search,properties,collections[i],hasSearchField);
-        }
+        for(int i=0; i<collections.length; i++) setTotalSearch(wnSearch,search,properties,collections[i],hasSearchField);
 
         //검색 수행
         wnSearch.w3ReceiveSearchQueryResult(3 );
@@ -93,11 +88,11 @@ public class SearchServiceImpl implements SearchService{
             //검색어 (오타 → 정타 추천) 수정
             search.setQuery(suggestedQuery);
 
-            JSONObject searchResultJsonTemp = getSearchResult(search);
+            //JSONObject searchResultJsonTemp = getSearchResult(search);
 
-            if(allTotalCount > 0)  searchResultJson = searchResultJsonTemp;
+            //if(allTotalCount > 0)  searchResultJson = searchResultJsonTemp;
         }
-        SearchQueryResultJson.put("typoQuery", typoQuery);
+        //SearchQueryResultJson.put("typoQuery", typoQuery);
         //오타 검색어 초기화
         typoQuery = "";
 
@@ -367,7 +362,8 @@ public class SearchServiceImpl implements SearchService{
                 JSONObject fieldJsonObject = new JSONObject();
 
                 for (String documentField : documentFields) {
-                    fieldJsonObject.put(documentField,wnSearch.w3GetFieldInGroup(collections[i], documentField,j, 0));
+                    if(collections[i].equals("oneplus_test")) fieldJsonObject.put(documentField,wnSearch.w3GetField(collections[i], documentField,j));
+                    else if(collections[i].equals("thefresh_test")) fieldJsonObject.put(documentField,wnSearch.w3GetFieldInGroup(collections[i], documentField,j, 0));
                 }
 
                 searchResultJsonObject.put("field",fieldJsonObject);
