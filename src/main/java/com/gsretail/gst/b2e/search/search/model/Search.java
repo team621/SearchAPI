@@ -91,6 +91,9 @@ public class Search {
         this.minSellPrice = nullCheckJsonParameter(jsonObj, "minSellPrice", "0");
         this.categoryId = nullCheckJsonParameter(jsonObj, "categoryId", "");
         this.typoSearch = nullCheckJsonParameter(jsonObj, "typoSearch", "N");
+        this.storeCode = nullCheckJsonParameter(jsonObj , "storeCode" , "");
+        this.supermarketItemCode = nullCheckJsonParameter(jsonObj , "supermarketItemCode" , "");
+        this.storeCount = Integer.parseInt(nullCheckJsonParameter(jsonObj, "storeCount", "3"));
     }
 
     /**

@@ -69,9 +69,11 @@ public class SearchServiceImpl implements SearchService{
 
         //검색엔진 설정
         for(int i=0; i<collections.length; i++) {
-            setSearchEngine(wnSearch,search,properties,collections[i],hasSearchField);
+            if(!"".equals(search.getStoreCode())){
+                setStoreCodeSearch(wnSearch,search,properties,collections[i],hasSearchField);
+            }
+            setTotalSearch(wnSearch,search,properties,collections[i],hasSearchField);
         }
-
 
         //검색 수행
         wnSearch.w3ReceiveSearchQueryResult(3 );
@@ -211,9 +213,14 @@ public class SearchServiceImpl implements SearchService{
      * @param collection     컬렉션 명
      * @param hasSearchField 검색필드 (전체,빈값 / 특정 검색필드) 구분
      */
-    public void setSearchEngine(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField){
+    public void setTotalSearch(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField){
         int ret = 0;
         ret += setCollectioInfoSetting(wnSearch , search , properties , collection , hasSearchField , search.getListCount());
+
+        if(collection.equals("thefresh_test")){
+            ret += wnSearch.w3SetGroupBy(collection, "supermarketItemCode",1);
+            ret += wnSearch.w3SetSortFieldInGroup(collection, search.getSort()+",exposureSeq/DESC");
+        }
 
         //prefix query
         String exquery = setExquery(search);
@@ -222,6 +229,41 @@ public class SearchServiceImpl implements SearchService{
 
         if(ret == 0) System.out.println("Collection Setting Success");
         else System.out.println("Collection setting Fail");
+    }
+
+    public void setStoreCodeSearch(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField){
+        int ret = 0;
+
+        //검색엔진 기본 설정
+        setCollectioInfoSetting(wnSearch , search , properties , collection , hasSearchField , search.getStoreCount());
+
+        //prefix query
+        String exquery = "";
+        if(!"".equals(search.getStoreCode())){
+            exquery += "<storeCode:contains:" + search.getStoreCode() + ">";
+        }
+
+        if(!"".equals(search.getSupermarketItemCode())) {
+            exquery += " <supermarketItemCode:contains:" + search.getSupermarketItemCode() + ">";
+        }
+
+        if(!"".equals(exquery)){
+            ret = wnSearch.w3SetPrefixQuery(collection,exquery,1);
+        }
+
+        ret = wnSearch.w3ReceiveSearchQueryResult(2 );
+
+        int resultCount = wnSearch.w3GetResultCount(collection);
+        String storeCode = "";
+        for(int i = 0 ; i < resultCount ; i++){
+            if(resultCount == 1 || i + 1 == resultCount){
+                storeCode += wnSearch.w3GetField(collection , "storeCode" , i) ;
+            }else{
+                storeCode += wnSearch.w3GetField(collection , "storeCode" , i) + "|";
+            }
+        }
+        search.setStoreCode(storeCode);
+        System.out.println(search.getStoreCode());
     }
 
     public int setCollectioInfoSetting(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField , int resultCount){
@@ -252,11 +294,6 @@ public class SearchServiceImpl implements SearchService{
         }
 
         ret += wnSearch.w3SetSortField(collection, search.getSort()+",exposureSeq/DESC");
-
-        if(collection.equals("thefresh_test")){
-            ret += wnSearch.w3SetGroupBy(collection, "supermarketItemCode",1);
-            ret += wnSearch.w3SetSortFieldInGroup(collection, search.getSort()+",exposureSeq/DESC");
-        }
         ret += wnSearch.w3SetQueryAnalyzer(collection, 1, 1, 1, 1 );
 
         return ret;
