@@ -100,8 +100,7 @@ public class SearchServiceImpl implements SearchService{
                 JSONObject fieldJsonObject = new JSONObject();
 
                 for (String documentField : documentFields) {
-                    if(collections[i].equals("oneplus")) fieldJsonObject.put(documentField,wnSearch.w3GetField(collections[i], documentField,j));
-                    else if(collections[i].equals("thefresh")) fieldJsonObject.put(documentField,wnSearch.w3GetFieldInGroup(collections[i], documentField,j, 0));
+                    fieldJsonObject.put(documentField,wnSearch.w3GetFieldInGroup(collections[i], documentField,j, 0));
                 }
 
                 searchResultJsonObject.put("field",fieldJsonObject);

@@ -46,6 +46,15 @@ public class SearchController {
         return searchResultJson;
     }
 
+    @RequestMapping(value = "/search/v1/storeCodeSearch", method = {RequestMethod.POST, RequestMethod.GET})
+    public JSONObject getStoreCodeSearch(HttpServletRequest request){
+        Search search = setSearchParameter(request);
+
+        JSONObject searchResultJson = searchService.getSearchResult(search);
+
+        return searchResultJson;
+    }
+
     @RequestMapping(value = "/search/v1/storeStockSearch", method = {RequestMethod.POST, RequestMethod.GET})
     public void getStoreStock(){}
 

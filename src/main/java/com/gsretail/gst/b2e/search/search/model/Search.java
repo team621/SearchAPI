@@ -27,6 +27,7 @@ public class Search {
     private String sort;
     private int startCount;
     private int listCount;
+    private int storeCount;
     private String documentField;
     private String searchField;
     private String startDate;
@@ -52,6 +53,9 @@ public class Search {
     private String categoryField;
     private String prmByQty;
     private String prmGtQty;
+
+    private String storeCode;
+    private String supermarketItemCode;
 
     public Search() {}
 
@@ -87,6 +91,9 @@ public class Search {
         this.minSellPrice = nullCheckJsonParameter(jsonObj, "minSellPrice", "0");
         this.categoryId = nullCheckJsonParameter(jsonObj, "categoryId", "");
         this.typoSearch = nullCheckJsonParameter(jsonObj, "typoSearch", "N");
+        this.storeCode = nullCheckJsonParameter(jsonObj , "storeCode" , "");
+        this.supermarketItemCode = nullCheckJsonParameter(jsonObj , "supermarketItemCode" , "");
+        this.storeCount = Integer.parseInt(nullCheckJsonParameter(jsonObj, "storeCount", "3"));
     }
 
     /**
@@ -155,6 +162,14 @@ public class Search {
 
     public void setListCount(int listCount) {
         this.listCount = listCount;
+    }
+
+    public int getStoreCount() {
+        return storeCount;
+    }
+
+    public void setStoreCount(int storeCount) {
+        this.storeCount = storeCount;
     }
 
     public String getDocumentField() {
@@ -341,10 +356,6 @@ public class Search {
         this.categoryField = categoryField;
     }
 
-    public String getPrmByQty() {
-        return prmByQty;
-    }
-
     public void setPrmByQty(String prmByQty) {
         this.prmByQty = prmByQty;
     }
@@ -355,5 +366,21 @@ public class Search {
 
     public void setPrmGtQty(String prmGtQty) {
         this.prmGtQty = prmGtQty;
+    }
+
+    public String getStoreCode() {
+        return storeCode;
+    }
+
+    public void setStoreCode(String storeCode) {
+        this.storeCode = storeCode;
+    }
+
+    public String getSupermarketItemCode() {
+        return supermarketItemCode;
+    }
+
+    public void setSupermarketItemCode(String supermarketItemCode) {
+        this.supermarketItemCode = supermarketItemCode;
     }
 }
