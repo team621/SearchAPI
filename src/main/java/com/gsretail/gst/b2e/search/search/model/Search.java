@@ -27,6 +27,7 @@ public class Search {
     private String sort;
     private int startCount;
     private int listCount;
+    private int storeCount;
     private String documentField;
     private String searchField;
     private String startDate;
@@ -50,6 +51,11 @@ public class Search {
     private String categoryId;
     private String typoSearch;
     private String categoryField;
+    private String prmByQty;
+    private String prmGtQty;
+
+    private String storeCode;
+    private String supermarketItemCode;
 
     public Search() {}
 
@@ -153,6 +159,14 @@ public class Search {
 
     public void setListCount(int listCount) {
         this.listCount = listCount;
+    }
+
+    public int getStoreCount() {
+        return storeCount;
+    }
+
+    public void setStoreCount(int storeCount) {
+        this.storeCount = storeCount;
     }
 
     public String getDocumentField() {
@@ -337,5 +351,39 @@ public class Search {
 
     public void setCategoryField(String categoryField) {
         this.categoryField = categoryField;
+    }
+
+    public String getPrmByQty() {
+        return prmByQty;
+    }
+
+    public void setPrmByQty(String prmByQty) {
+        this.prmByQty = prmByQty;
+    }
+
+    public String getPrmGtQty() {
+        return prmGtQty;
+    }
+
+    public void setPrmGtQty(String prmGtQty) {
+        this.prmGtQty = prmGtQty;
+    }
+
+
+
+    public String getStoreCode() {
+        return storeCode;
+    }
+
+    public void setStoreCode(String storeCode) {
+        this.storeCode = storeCode;
+    }
+
+    public String getSupermarketItemCode() {
+        return supermarketItemCode;
+    }
+
+    public void setSupermarketItemCode(String supermarketItemCode) {
+        this.supermarketItemCode = supermarketItemCode;
     }
 }
