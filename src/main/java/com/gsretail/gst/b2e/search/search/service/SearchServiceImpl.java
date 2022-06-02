@@ -234,7 +234,6 @@ public class SearchServiceImpl implements SearchService{
      * @param search         parameter 객체
      * @param properties     the properties
      * @param collection     컬렉션 정보
-     * @param hasSearchField 검색 필드 체크값
      * @param hasSearchField 검색필드 (전체,빈값 / 특정 검색필드) 구분
      * @return int ret       정상 적용 여부 (0 : 정상 , 이외 : error)
      */
@@ -288,7 +287,6 @@ public class SearchServiceImpl implements SearchService{
     public int setCollectioInfoSetting(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField , int resultCount){
         int ret = 0;
         ret += wnSearch.w3AddCollection(collection);
-        ret += wnSearch.w3SetPageInfo(collection, search.getStartCount(), search.getListCount());
         ret += wnSearch.w3SetPageInfo(collection, search.getStartCount(), resultCount);
         ret += wnSearch.w3SetDateRange(collection, search.getStartDate(), search.getEndDate());
         ret += wnSearch.w3SetSpellCorrectionQuery(search.getQuery(),1);
@@ -364,8 +362,8 @@ public class SearchServiceImpl implements SearchService{
                 JSONObject fieldJsonObject = new JSONObject();
 
                 for (String documentField : documentFields) {
-                    if(collections[i].equals("oneplus")) fieldJsonObject.put(documentField,wnSearch.w3GetField(collections[i], documentField,j));
-                    else if(collections[i].equals("thefresh")) fieldJsonObject.put(documentField,wnSearch.w3GetFieldInGroup(collections[i], documentField,j, 0));
+                    if(collections[i].equals("oneplus_test")) fieldJsonObject.put(documentField,wnSearch.w3GetField(collections[i], documentField,j));
+                    else if(collections[i].equals("thefresh_test")) fieldJsonObject.put(documentField,wnSearch.w3GetFieldInGroup(collections[i], documentField,j, 0));
                 }
 
                 searchResultJsonObject.put("field",fieldJsonObject);
