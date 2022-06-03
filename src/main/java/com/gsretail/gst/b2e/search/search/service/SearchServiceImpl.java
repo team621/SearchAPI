@@ -31,6 +31,7 @@ public class SearchServiceImpl implements SearchService{
     String typoQuery = "";
     //오타검색을 위한 전체 검색 결과 카운트
     int allTotalCount = 0;
+    String selectStoreCode = "";
 
     public JSONObject getSearchResult(Search search){
         //정타 추천으로도 검색 결과가 없을 경우를 위해 전체 검색 결과 수 초기화
@@ -102,6 +103,7 @@ public class SearchServiceImpl implements SearchService{
     }//end getSearchResult
 
     public JSONObject getStoreSearchResult(Search search){
+        selectStoreCode = search.getStoreCode();
         //정타 추천으로도 검색 결과가 없을 경우를 위해 전체 검색 결과 수 초기화
         allTotalCount = 0;
 
@@ -214,7 +216,7 @@ public class SearchServiceImpl implements SearchService{
         int ret = 0;
         ret += setCollectioInfoSetting(wnSearch , search , properties , collection , hasSearchField , search.getListCount());
 
-        if(collection.equals("thefresh_test")){
+        if(collection.equals("thefresh")){
             ret += wnSearch.w3SetGroupBy(collection, "supermarketItemCode",1);
             ret += wnSearch.w3SetSortFieldInGroup(collection, search.getSort()+",exposureSeq/DESC");
         }
@@ -269,6 +271,7 @@ public class SearchServiceImpl implements SearchService{
                 storeCode += wnSearch.w3GetField(collection , "storeCode" , i) + "|";
             }
         }
+
         search.setStoreCode(storeCode);
 
         return ret;
@@ -337,10 +340,10 @@ public class SearchServiceImpl implements SearchService{
             int totalCount = 0;
 
             //수정필요
-            if(collections[i].equals("oneplus_test")){
+            if(collections[i].equals("oneplus")){
                 resultCount = wnSearch.w3GetResultCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultCount(collections[i]);
                 totalCount =  wnSearch.w3GetResultTotalCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultTotalCount(collections[i]);
-            }else if(collections[i].equals("thefresh_test")){
+            }else if(collections[i].equals("thefresh")){
                 resultCount = wnSearch.w3GetResultGroupCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultGroupCount(collections[i]);
                 totalCount = wnSearch.w3GetResultTotalGroupCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultTotalGroupCount(collections[i]);
             }
@@ -377,7 +380,7 @@ public class SearchServiceImpl implements SearchService{
 
             documentset.put("id",collections[i]);
 
-            documentset.put("selectStoreCode",search.getStoreCode());
+            documentset.put("selectStoreCode",selectStoreCode);
 
             documentset.put("Documentset",countJsonObject);
 
@@ -433,6 +436,12 @@ public class SearchServiceImpl implements SearchService{
 
         String storeCode = search.getStoreCode();
         if(!"".equals(storeCode)) exquery += mkExqueryString(storeCode , "storeCode");
+
+        String prmByQty = search.getPrmByQty();
+        if(!"".equals(prmByQty)) exquery += mkExqueryString(prmByQty, "prmByQty");
+
+        String prmGtQty = search.getPrmByQty();
+        if(!"".equals(prmGtQty)) exquery += mkExqueryString(prmGtQty, "prmGtQty");
 
         return exquery;
     }

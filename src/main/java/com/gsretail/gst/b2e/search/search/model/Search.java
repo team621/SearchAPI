@@ -53,7 +53,6 @@ public class Search {
     private String categoryField;
     private String prmByQty;
     private String prmGtQty;
-
     private String storeCode;
     private String supermarketItemCode;
 
@@ -382,5 +381,9 @@ public class Search {
 
     public void setSupermarketItemCode(String supermarketItemCode) {
         this.supermarketItemCode = supermarketItemCode;
+    }
+
+    public String getPrmByQty() {
+        return prmByQty;
     }
 }
