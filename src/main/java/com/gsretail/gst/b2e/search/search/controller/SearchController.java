@@ -56,7 +56,14 @@ public class SearchController {
     }
 
     @RequestMapping(value = "/search/v1/storeStockSearch", method = {RequestMethod.POST, RequestMethod.GET})
-    public void getStoreStock(){}
+    public JSONObject getStoreStockSearchResult(HttpServletRequest request){
+        Search search = setSearchParameter(request);
+
+        JSONObject searchResultJson = searchService.getStoreStockSearchResult(search);
+
+        return searchResultJson;
+    }
+
 
     private Search setSearchParameter(HttpServletRequest request) {
         Search search = null;

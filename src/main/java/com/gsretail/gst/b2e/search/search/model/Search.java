@@ -52,9 +52,9 @@ public class Search {
     private String typoSearch;
     private String categoryField;
     private String prmByQty;
-    private String prmGtQty;
     private String storeCode;
     private String supermarketItemCode;
+    private String stockSupermarketItemCode;
 
     public Search() {}
 
@@ -91,10 +91,11 @@ public class Search {
         this.categoryId = nullCheckJsonParameter(jsonObj, "categoryId", "");
         this.typoSearch = nullCheckJsonParameter(jsonObj, "typoSearch", "N");
         this.storeCode = nullCheckJsonParameter(jsonObj , "storeCode" , "");
-        this.supermarketItemCode = nullCheckJsonParameter(jsonObj , "supermarketItemCode" , "");
-        this.storeCount = Integer.parseInt(nullCheckJsonParameter(jsonObj, "storeCount", "3"));
         this.prmByQty = nullCheckJsonParameter(jsonObj , "prmByQty" , "");
-        this.prmGtQty = nullCheckJsonParameter(jsonObj , "prmGtQty" , "");
+        this.storeCount = Integer.parseInt(nullCheckJsonParameter(jsonObj, "storeCount", "3"));
+        this.supermarketItemCode = nullCheckJsonParameter(jsonObj , "supermarketItemCode" , "");
+        this.stockSupermarketItemCode = nullCheckJsonParameter(jsonObj , "stockSupermarketItemCode" , "");
+
     }
 
     /**
@@ -357,16 +358,12 @@ public class Search {
         this.categoryField = categoryField;
     }
 
+    public String getPrmByQty() {
+        return prmByQty;
+    }
+
     public void setPrmByQty(String prmByQty) {
         this.prmByQty = prmByQty;
-    }
-
-    public String getPrmGtQty() {
-        return prmGtQty;
-    }
-
-    public void setPrmGtQty(String prmGtQty) {
-        this.prmGtQty = prmGtQty;
     }
 
     public String getStoreCode() {
@@ -385,7 +382,11 @@ public class Search {
         this.supermarketItemCode = supermarketItemCode;
     }
 
-    public String getPrmByQty() {
-        return prmByQty;
+    public String getStockSupermarketItemCode() {
+        return stockSupermarketItemCode;
+    }
+
+    public void setStockSupermarketItemCode(String stockSupermarketItemCode) {
+        this.stockSupermarketItemCode = stockSupermarketItemCode;
     }
 }
