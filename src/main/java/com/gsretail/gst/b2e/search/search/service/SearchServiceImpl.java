@@ -27,8 +27,8 @@ import java.util.Properties;
  */
 @Service
 public class SearchServiceImpl implements SearchService{
-    String thefresh ="thefresh_test";
-    String oneplus ="oneplus_test";
+    String thefresh ="thefresh";
+    String oneplus ="oneplus";
 
     //기존 검색어 (오타 검색)
     String typoQuery = "";
@@ -244,8 +244,14 @@ public class SearchServiceImpl implements SearchService{
     public int setStoreCodeSearch(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField){
         int ret = 0;
 
+        int storeCount = 1;
+        String storeCodeStr = search.getStoreCode();
+        for(int i=0; i<storeCodeStr.length(); i++){
+            if(storeCodeStr.charAt(i) == '|') storeCount++;
+        }
+
         //검색엔진 기본 설정
-        ret += setCollectioInfoSetting(wnSearch , search , properties , collection , hasSearchField , search.getStoreCount() * 2);
+        ret += setCollectioInfoSetting(wnSearch , search , properties , collection , hasSearchField , storeCount * 2);
 
         //prefix query
         String exquery = "";
