@@ -93,6 +93,8 @@ public class Search {
         this.storeCode = nullCheckJsonParameter(jsonObj , "storeCode" , "");
         this.supermarketItemCode = nullCheckJsonParameter(jsonObj , "supermarketItemCode" , "");
         this.storeCount = Integer.parseInt(nullCheckJsonParameter(jsonObj, "storeCount", "3"));
+        this.prmByQty = nullCheckJsonParameter(jsonObj , "prmByQty" , "");
+        this.prmGtQty = nullCheckJsonParameter(jsonObj , "prmGtQty" , "");
     }
 
     /**
