@@ -34,7 +34,6 @@ public class SearchServiceImpl implements SearchService{
     String typoQuery = "";
     //오타검색을 위한 전체 검색 결과 카운트
     int allTotalCount = 0;
-    String selectStoreCode = "";
 
     public JSONObject getSearchResult(Search search){
         //정타 추천으로도 검색 결과가 없을 경우를 위해 전체 검색 결과 수 초기화
@@ -106,7 +105,6 @@ public class SearchServiceImpl implements SearchService{
     }//end getSearchResult
 
     public JSONObject getStoreSearchResult(Search search){
-        selectStoreCode = search.getStoreCode();
         //정타 추천으로도 검색 결과가 없을 경우를 위해 전체 검색 결과 수 초기화
         allTotalCount = 0;
 
@@ -226,6 +224,7 @@ public class SearchServiceImpl implements SearchService{
 
         //prefix query
         String exquery = setExquery(search);
+        System.out.println("total ex = " + exquery);
         if(!exquery.equals("")) ret = wnSearch.w3SetPrefixQuery(collection,exquery,1);
         ret += wnSearch.w3SetFilterQuery(collection,"<sellPrice:gt:"+search.getMinSellPrice()+"> <sellPrice:lt:"+search.getMaxSellPrice()+">");
 
@@ -255,7 +254,7 @@ public class SearchServiceImpl implements SearchService{
             exquery += "<storeCode:contains:" + search.getStoreCode() + ">";
         }
 
-        if(!"".equals(search.getSupermarketItemCode())) {
+        if(!"".equals(search.getSupermarketItemCode())){
             exquery += " <supermarketItemCode:contains:" + search.getSupermarketItemCode() + ">";
         }
 
@@ -263,7 +262,7 @@ public class SearchServiceImpl implements SearchService{
             ret += wnSearch.w3SetPrefixQuery(collection,exquery,1);
         }
 
-
+        System.out.println(exquery);
         ret += wnSearch.w3ReceiveSearchQueryResult(2 );
 
         int resultCount = wnSearch.w3GetResultCount(collection);
@@ -275,7 +274,6 @@ public class SearchServiceImpl implements SearchService{
                 storeCode += wnSearch.w3GetField(collection , "storeCode" , i) + "|";
             }
         }
-
         search.setStoreCode(storeCode);
 
         return ret;
@@ -383,7 +381,7 @@ public class SearchServiceImpl implements SearchService{
 
             documentset.put("id",collections[i]);
 
-            documentset.put("selectStoreCode",selectStoreCode);
+            documentset.put("selectStoreCode",search.getStoreCode());
 
             documentset.put("Documentset",countJsonObject);
 
