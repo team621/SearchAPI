@@ -224,7 +224,6 @@ public class SearchServiceImpl implements SearchService{
 
         //prefix query
         String exquery = setExquery(search);
-        System.out.println("total ex = " + exquery);
         if(!exquery.equals("")) ret = wnSearch.w3SetPrefixQuery(collection,exquery,1);
         ret += wnSearch.w3SetFilterQuery(collection,"<sellPrice:gt:"+search.getMinSellPrice()+"> <sellPrice:lt:"+search.getMaxSellPrice()+">");
 
@@ -262,7 +261,6 @@ public class SearchServiceImpl implements SearchService{
             ret += wnSearch.w3SetPrefixQuery(collection,exquery,1);
         }
 
-        System.out.println(exquery);
         ret += wnSearch.w3ReceiveSearchQueryResult(2 );
 
         int resultCount = wnSearch.w3GetResultCount(collection);
