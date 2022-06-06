@@ -522,7 +522,7 @@ public class SearchServiceImpl implements SearchService{
         if(!"".equals(stockSupermarketItemCode)) exquery += mkExqueryString(stockSupermarketItemCode, "supermarketItemCode");
 
         return exquery;
-    }
+    } 
 
     public String mkExqueryString(String parameter, String prefixFieldName){
         String exquery = "";
