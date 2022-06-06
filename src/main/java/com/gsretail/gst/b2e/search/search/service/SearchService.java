@@ -27,4 +27,5 @@ public interface SearchService {
      */
     public JSONObject getSearchResult(Search search);
     public JSONObject getStoreSearchResult(Search search);
+    public JSONObject getStoreStockSearchResult(Search search);
 }

@@ -388,6 +388,4 @@ public class Search {
     public void setSupermarketItemCode(String supermarketItemCode) {
         this.supermarketItemCode = supermarketItemCode;
     }
-
-
 }
