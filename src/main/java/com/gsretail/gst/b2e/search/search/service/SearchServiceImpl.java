@@ -449,7 +449,7 @@ public class SearchServiceImpl implements SearchService{
         if(!"".equals(prmGtQty)) exquery += mkExqueryString(prmGtQty, "prmGtQty");
 
         return exquery;
-    }
+    } 
 
     public String mkExqueryString(String parameter, String prefixFieldName){
         String exquery = "";
