@@ -381,11 +381,13 @@ public class Search {
         return supermarketItemCode;
     }
 
+    public String getPrmByQty() {
+        return prmByQty;
+    }
+
     public void setSupermarketItemCode(String supermarketItemCode) {
         this.supermarketItemCode = supermarketItemCode;
     }
 
-    public String getPrmByQty() {
-        return prmByQty;
-    }
+
 }
