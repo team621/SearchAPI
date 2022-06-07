@@ -55,6 +55,7 @@ public class Search {
     private String prmGtQty;
     private String storeCode;
     private String supermarketItemCode;
+    private String StockSupermarketItemCode;
 
     public Search() {}
 
@@ -95,6 +96,7 @@ public class Search {
         this.storeCount = Integer.parseInt(nullCheckJsonParameter(jsonObj, "storeCount", "3"));
         this.prmByQty = nullCheckJsonParameter(jsonObj , "prmByQty" , "");
         this.prmGtQty = nullCheckJsonParameter(jsonObj , "prmGtQty" , "");
+        this.StockSupermarketItemCode = nullCheckJsonParameter(jsonObj,"StockSupermarketItemCode","");
     }
 
     /**
@@ -387,5 +389,13 @@ public class Search {
 
     public void setSupermarketItemCode(String supermarketItemCode) {
         this.supermarketItemCode = supermarketItemCode;
+    }
+
+    public String getStockSupermarketItemCode() {
+        return StockSupermarketItemCode;
+    }
+
+    public void setStockSupermarketItemCode(String stockSupermarketItemCode) {
+        StockSupermarketItemCode = stockSupermarketItemCode;
     }
 }
