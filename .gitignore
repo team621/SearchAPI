@@ -34,4 +34,4 @@ build/
 
 
 ### properties ###
-collectioninfo.properties
+src/main/resources/collectionInfo.properties

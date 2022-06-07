@@ -518,11 +518,14 @@ public class SearchServiceImpl implements SearchService{
         String prmByQty = search.getPrmByQty();
         if(!"".equals(prmByQty)) exquery += mkExqueryString(prmByQty, "prmByQty");
 
+        String prmGtQty = search.getPrmGtQty();
+        if(!"".equals(prmGtQty)) exquery += mkExqueryString(prmByQty, "prmGtQty");
+
         String stockSupermarketItemCode = search.getStockSupermarketItemCode();
         if(!"".equals(stockSupermarketItemCode)) exquery += mkExqueryString(stockSupermarketItemCode, "supermarketItemCode");
 
         return exquery;
-    }
+    } 
 
     public String mkExqueryString(String parameter, String prefixFieldName){
         String exquery = "";
