@@ -25,7 +25,7 @@ public interface SearchService {
      * @param search     검색 객체
      * @return 검색 결과 (JSON)
      */
-    public JSONObject getSearchResult(Search search);
-    public JSONObject getStoreSearchResult(Search search);
-    public JSONObject getStoreStockSearchResult(Search search);
+
+    public JSONObject getTotalSearch(Search search);
+    public JSONObject getDeliveryStoreSearch(Search search);
 }
