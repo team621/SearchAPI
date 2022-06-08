@@ -91,11 +91,11 @@ public class SearchServiceImpl implements SearchService{
             //검색어 (오타 → 정타 추천) 수정
             search.setQuery(suggestedQuery);
 
-            //JSONObject searchResultJsonTemp = getSearchResult(search);
+            JSONObject searchResultJsonTemp = getSearchResult(search);
 
-            //if(allTotalCount > 0)  searchResultJson = searchResultJsonTemp;
+            if(allTotalCount > 0)  searchResultJson = searchResultJsonTemp;
         }
-        //SearchQueryResultJson.put("typoQuery", typoQuery);
+        SearchQueryResultJson.put("typoQuery", typoQuery);
         //오타 검색어 초기화
         typoQuery = "";
 
@@ -273,7 +273,9 @@ public class SearchServiceImpl implements SearchService{
         if(!exquery.equals("")) ret = wnSearch.w3SetPrefixQuery(collection,exquery,1);
 
         //set Filter query
-        ret += wnSearch.w3SetFilterQuery(collection,"<sellPrice:gt:"+search.getMinSellPrice()+"> <sellPrice:lt:"+search.getMaxSellPrice()+">");
+        String sellPrice = "(<sellPrice:gt:"+search.getMinSellPrice()+"> <sellPrice:lt:"+search.getMaxSellPrice()+">)";
+        //String pickUpDate = "(<pickUpDate:gt:19700101>";
+        ret += wnSearch.w3SetFilterQuery(collection,sellPrice);
 
         return ret;
     }
@@ -353,7 +355,7 @@ public class SearchServiceImpl implements SearchService{
      * @param resultCount    검색결과 갯수
      * @return int ret       정상 적용 여부 (0 : 정상 , 이외 : error)
      */
-    public int setCollectioInfoSetting(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField , int resultCount){
+    public int  setCollectioInfoSetting(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField , int resultCount){
         int ret = 0;
         ret += wnSearch.w3AddCollection(collection);
         ret += wnSearch.w3SetPageInfo(collection, search.getStartCount(), resultCount);
@@ -416,7 +418,6 @@ public class SearchServiceImpl implements SearchService{
                     totalCount = wnSearch.w3GetResultTotalGroupCount(collections[i]) <= 0 ? 0 : wnSearch.w3GetResultTotalGroupCount(collections[i]);
                 }
             }
-
 
             //전체 컬렉션의 총 검색 건수
             allTotalCount += totalCount;
@@ -519,7 +520,7 @@ public class SearchServiceImpl implements SearchService{
         if(!"".equals(prmByQty)) exquery += mkExqueryString(prmByQty, "prmByQty");
 
         String prmGtQty = search.getPrmGtQty();
-        if(!"".equals(prmGtQty)) exquery += mkExqueryString(prmByQty, "prmGtQty");
+        if(!"".equals(prmGtQty)) exquery += mkExqueryString(prmGtQty, "prmGtQty");
 
         String stockSupermarketItemCode = search.getStockSupermarketItemCode();
         if(!"".equals(stockSupermarketItemCode)) exquery += mkExqueryString(stockSupermarketItemCode, "supermarketItemCode");
