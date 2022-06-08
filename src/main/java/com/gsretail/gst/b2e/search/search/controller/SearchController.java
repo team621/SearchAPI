@@ -41,25 +41,34 @@ public class SearchController {
     public JSONObject getSearchResult(HttpServletRequest request){
         Search search = setSearchParameter(request);
 
-        JSONObject searchResultJson = searchService.getSearchResult(search);
+        JSONObject searchResultJson = searchService.getTotalSearch(search);
 
         return searchResultJson;
     }
-
+//
     @RequestMapping(value = "/search/v1/deliveryStoreSearch", method = {RequestMethod.POST, RequestMethod.GET})
     public JSONObject getStoreSearchResult(HttpServletRequest request){
         Search search = setSearchParameter(request);
 
-        JSONObject searchResultJson = searchService.getStoreSearchResult(search);
+        JSONObject searchResultJson = searchService.getDeliveryStoreSearch(search);
 
         return searchResultJson;
     }
+//
+//    @RequestMapping(value = "/search/v1/storeStockSearch", method = {RequestMethod.POST, RequestMethod.GET})
+//    public JSONObject getStoreStockSearchResult(HttpServletRequest request){
+//        Search search = setSearchParameter(request);
+//
+//        JSONObject searchResultJson = searchService.getStoreStockSearchResult(search);
+//
+//        return searchResultJson;
+//    }
 
-    @RequestMapping(value = "/search/v1/storeStockSearch", method = {RequestMethod.POST, RequestMethod.GET})
-    public JSONObject getStoreStockSearchResult(HttpServletRequest request){
+    @RequestMapping(value = "/search/v1/test", method = {RequestMethod.POST, RequestMethod.GET})
+    public JSONObject getTest(HttpServletRequest request){
         Search search = setSearchParameter(request);
 
-        JSONObject searchResultJson = searchService.getStoreStockSearchResult(search);
+        JSONObject searchResultJson = searchService.getTotalSearch(search);
 
         return searchResultJson;
     }
