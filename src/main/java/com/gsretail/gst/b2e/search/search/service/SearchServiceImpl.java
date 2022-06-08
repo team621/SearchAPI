@@ -150,34 +150,6 @@ public class SearchServiceImpl implements SearchService {
         return searchResultJson;
     }
 
-//    public JSONObject getStockCountSearch(Search search){
-//        WNCollection wncol = new WNCollection();
-//        String collection = search.getCollection();
-//        String[] searchFields = null;
-//        String[] collections = null;
-//
-//        if (collection.equals("ALL")) { //통합검색인 경우
-//            collections = wncol.COLLECTIONS;
-//        } else {                        //개별검색인 경우
-//            collections = collection.split(",");
-//        }
-//
-//        WNSearch wnsearch = new WNSearch(isDebug, false, collections, searchFields);
-//
-//        //컬렉션 설정
-//        setCollectionInfo(wnsearch, collections, search, "totalSearch");
-//
-//        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery);
-//        JSONObject searchResultJson = getSearchResult(wnsearch, wncol, collections, search);
-//
-//        // 디버그 메시지 출력
-//        String debugMsg = wnsearch.printDebug() != null ? wnsearch.printDebug().trim() : "";
-//        if (isDebug) {
-//            System.out.println(debugMsg.replace("<br>", "\n"));
-//        }
-//        return searchResultJson;
-//    }
-
     public void setCollectionInfo(WNSearch wnsearch, String[] collections, Search search, String flag) {
         for (int i = 0; i < collections.length; i++) {
 
@@ -336,89 +308,6 @@ public class SearchServiceImpl implements SearchService {
 
         return SearchQueryResultJson;
     }
-
-
-//    public JSONObject getTotalSearchResult(Search search){
-//
-//        allTotalCount = 0;
-//
-//        //검색 결과 return json 객체
-//        JSONObject searchResultJson = new JSONObject();
-//        JSONObject SearchQueryResultJson = new JSONObject();
-//        JSONArray collectionJsonArray = new JSONArray();
-//
-//        SearchQueryResultJson.put("query",search.getQuery());
-//        SearchQueryResultJson.put("Version","5.3.0");
-//
-//        //검색엔진 설정 프로퍼티 파일 생성
-//        Properties properties = getProperties();
-//
-//        //SF-1 검색엔진 검색 객체 생성
-//        QueryAPI530.Search wnSearch = new QueryAPI530.Search();
-//        int ret = 0;
-//        ret += wnSearch.w3SetCodePage("UTF-8");
-//        ret += wnSearch.w3SetCommonQuery(search.getQuery(),0);
-//        ret += wnSearch.w3ConnectServer(properties.getProperty("SEARCH_IP"), Integer.parseInt(properties.getProperty("SEARCH_PORT")), Integer.parseInt(properties.getProperty("SEARCH_TIMEOUT")));
-//
-//        if(ret == 0) System.out.println("Search Connection Success");
-//        else System.out.println("Search Connection Fail");
-//
-//        //컬렉션이 ALL 일 경우 전체 컬렉션으로 설정
-//        setCollectionInfoValue(search, "", "COLLECTION", properties);
-//
-//        //컬렉션 리스트(배열) 구하기
-//        String[] collections = search.getArrays(search.getCollection());
-//
-//        //검색 필드 체크 (ALL or 빈 값 확인)
-//        Boolean hasSearchField = true;
-//        if(search.getSearchField().equals("") || search.getSearchField().equals("ALL")) hasSearchField = false;
-//
-//        //검색엔진 설정
-//        for(int i=0; i<collections.length; i++) setTotalSearch(wnSearch,search,properties,collections[i],hasSearchField);
-//
-//        //검색 수행
-//        wnSearch.w3ReceiveSearchQueryResult(3 );
-//
-//        //검색결과 생성
-////        setSearchResult(wnSearch , collections , search , properties , "totalSearch" , collectionJsonArray , searchResultJson , SearchQueryResultJson );
-//
-//        //오타에 대한 정타 추천 검색어
-//        String typoSearch = search.getTypoSearch();
-//        String suggestedQuery = wnSearch.w3GetSuggestedQuery();
-//
-//        //오타검색 (전체 검색 결과가 없고 오타 수정 단어가 있을 경우, 오타검색일경우)
-//        if(allTotalCount <= 0 && !suggestedQuery.equals("") && typoSearch.equals("N")) {
-//            //오타 검색어(기존 검색어) 저장
-//            typoQuery = search.getQuery();
-//
-//            //검색어 (오타 → 정타 추천) 수정
-//            search.setQuery(suggestedQuery);
-//
-//            //JSONObject searchResultJsonTemp = getSearchResult(search);
-//
-//            //if(allTotalCount > 0)  searchResultJson = searchResultJsonTemp;
-//        }
-//        //SearchQueryResultJson.put("typoQuery", typoQuery);
-//        //오타 검색어 초기화
-//        typoQuery = "";
-//
-//        wnSearch.w3CloseServer();
-//
-//        return searchResultJson;
-//    }//end getSearchResult
-
-
-//    public int setStoreStockSearch(QueryAPI530.Search wnSearch, Search search, Properties properties, String collection, Boolean hasSearchField){
-//        int ret = 0;
-//        ret += setCollectioInfoSetting(wnSearch , search , properties , collection , hasSearchField , search.getListCount());
-//
-//        //set prefix query
-//        String exquery = setExquery(search);
-//        if(!exquery.equals("")) ret = wnSearch.w3SetPrefixQuery(collection,exquery,1);
-//
-//        return ret;
-//    }
-//
 
     public String setExquery(Search search) {
         String exquery = "";
