@@ -148,6 +148,33 @@ public class WNCommon {
     }
 
     /**
+     * setCommonQuery의 오버로딩(overloading) 함수로
+     * session정보를 부가기능으로 사용할 수 있다.
+     * @param query
+     * @param charSet
+     * @param logInfo
+     * @param queryLog queryLog 사용 여부
+     * @return 성공이면 0을 반환한다. 실패면 0이 아닌 값을 반환한다.
+     */
+    public int setCommonQuery(String query, String charSet, int useOrResult, boolean useSuggestedQuery, String[] logInfo , boolean queryLog) {
+        int ret = 0;
+        if (logInfo != null && logInfo.length > 2) {
+            ret = search.w3SetSessionInfo(logInfo[0], logInfo[1], logInfo[2]);
+        }
+        ret = search.w3SetCodePage(charSet);
+        if(queryLog){
+            ret = search.w3SetQueryLog(1);
+        }else{
+            ret = search.w3SetQueryLog(0);
+        }
+        ret = search.w3SetCommonQuery(query, useOrResult);
+        if(useSuggestedQuery) {
+            ret = search.w3SetSpellCorrectionQuery(query, 0);
+        }
+        return ret;
+    }
+
+    /**
      * 컬렉션 별로 검색어 지정
      * @param collectionName
      * @param query

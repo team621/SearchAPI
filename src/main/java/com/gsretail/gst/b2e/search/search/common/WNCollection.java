@@ -32,7 +32,7 @@ public class WNCollection {
                     "thefresh", // set index name
                     "0,3",  // set pageinfo (start,count)
                     "1,1,1,1,0", // set query analyzer (useKMA,isCase,useOriginal,useSynonym, duplcated detection)
-                    "RANK/DESC,DATE/DESC",  // set sort field (field, ASC or DESC) multi sort ','
+                    "RANK/DESC",  // set sort field (field, ASC or DESC) multi sort ','
                     "basic,ropfm,100", //set ranking option (basic(custom,BM25), ranking order, ranking max count)
                     "itemName,shortItemName,storeName",// set search field
                     "DOCID,itemImageUrl,serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,itemName,shortItemName,sellPrice,discountPrice,discountRate,discountAmount,cardDiscountName,cardDiscountYn,extraPresentItemName,extraPresentItemShortName,extraPresentImageUrl,adultYn,pickupDate,stockCount,buyQuantity,soldOutSp,deliverySp,starPoint,prmByQty,prmGtQty,stockCheckYn,exposureSeq,categoryId,categoryName,recommendItemYn,storeName,storeCode,prtnitemcd,tagDate,supermarketItemCode,ALIAS",// set document field
@@ -61,7 +61,7 @@ public class WNCollection {
                     "oneplus", // set index name
                     "0,3",  // set pageinfo (start,count)
                     "1,1,1,1,0", // set query analyzer (useKMA,isCase,useOriginal,useSynonym, duplcated detection)
-                    "RANK/DESC,DATE/DESC",  // set sort field (field, ASC or DESC) multi sort ','
+                    "RANK/DESC",  // set sort field (field, ASC or DESC) multi sort ','
                     "basic,ropfm,100", //set ranking option (basic(custom,BM25), ranking order, ranking max count)
                     "itemName,shortItemName,storeName",// set search field
                     "DOCID,itemImageUrl,serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,itemName,shortItemName,sellPrice,discountPrice,discountRate,discountAmount,cardDiscountName,cardDiscountYn,extraPresentItemName,extraPresentItemShortName,extraPresentImageUrl,adultYn,pickupDate,stockCount,buyQuantity,soldOutSp,deliverySp,starPoint,prmByQty,prmGtQty,stockCheckYn,exposureSeq,categoryId,categoryName,recommendItemYn,storeName,storeCode,prtnitemcd,ALIAS",// set document field

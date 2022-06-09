@@ -64,7 +64,7 @@ public class SearchServiceImpl implements SearchService {
         setCollectionInfo(wnsearch, collections, search, "totalSearch");
 
         //검색 수행
-        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery);
+        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery , true);
 
         //검색결과 생성
         JSONObject searchResultJson = getSearchResult(wnsearch, wncol, collections, search);
@@ -129,8 +129,8 @@ public class SearchServiceImpl implements SearchService {
         //컬렉션 정보 설정
         setCollectionInfo(wnsearch, collections, search, "storeSearch");
 
-        //1. 조건에 맞는 매장 코드 검색 수행
-        wnsearch.search(search.getQuery(), false, CONNECTION_REUSE, useSuggestedQuery);
+        //1. 조건에 맞는 매장 코드 검색 수행 (queryLog 출력안함)
+        wnsearch.search(search.getQuery(), false, CONNECTION_REUSE, useSuggestedQuery , false);
 
         //1번 검색 수행 결과 이용한 상품출력할 매장 코드 생성
         String storeCode = "";
@@ -155,7 +155,7 @@ public class SearchServiceImpl implements SearchService {
         setCollectionInfo(wnsearch, collections, search, "totalSearch");
 
         //통합검색 수행
-        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery);
+        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery , true);
 
         //결과값 생성
         JSONObject searchResultJson = getSearchResult(wnsearch, wncol, collections, search);
