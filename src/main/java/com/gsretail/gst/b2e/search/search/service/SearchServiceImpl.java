@@ -82,12 +82,12 @@ public class SearchServiceImpl implements SearchService {
             search.setQuery(suggestedQuery);
 
             //오타로 검색된 기존 결과 Temp 저장
-            JSONObject searchResultJsonTemp = getTotalSearch(search);
+//            JSONObject searchResultJsonTemp = getTotalSearch(search);
 
             //오타 추천 검색 결과가 없을경우 기존 검색결과 사용
-            if(allTotalCount > 0)  {
-                searchResultJson = searchResultJsonTemp;
-            }
+//            if(allTotalCount > 0)  {
+//                searchResultJson = searchResultJsonTemp;
+//            }
         }
 
         //오타 검색어 초기화
