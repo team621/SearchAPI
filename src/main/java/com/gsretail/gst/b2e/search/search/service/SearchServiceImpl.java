@@ -294,9 +294,8 @@ public class SearchServiceImpl implements SearchService {
             //선택된 컬렉션 documentField 값 생성
             String[] documentFields = wncol.COLLECTION_INFO[collectionIndex][RESULT_FIELD].split(",");
 
+            List<Map<String, Map<String, String>>> fieldList = new ArrayList<>();
             for (int i = 0; i < resultCount; i++) {
-                JSONObject searchResultJsonObject = new JSONObject();
-                searchResultJsonObject.put("collectionId", collections[idx]);
                 Map<String , String> fieldMap = new HashMap<String , String>();
 
                 //supermarketItemCode로 그룹화 하는 컬렉션 분기하여 결과값 생성
@@ -307,9 +306,13 @@ public class SearchServiceImpl implements SearchService {
                         fieldMap.put(documentField, wnsearch.getFieldInGroup(collections[idx], documentField, i, 0));
                     }
                 }
-                searchResultJsonObject.put("field", fieldMap);
 
-                documentJsonArray.add(searchResultJsonObject);
+                Map<String , Map<String , String>> fieldListMap = new HashMap<String , Map<String , String>>();
+
+                fieldListMap.put("field" , fieldMap);
+
+                fieldList.add(fieldListMap);
+
             }
 
             //카테고리 리스트 출력
@@ -333,9 +336,9 @@ public class SearchServiceImpl implements SearchService {
                 categoryListMap.put(categoryName, categoryCnt);
             }
 
-            countJsonObject.put("Document", documentJsonArray);
+            countJsonObject.put("Document", fieldList);
 
-            documentset.put("id", collections[idx]);
+            documentset.put("CollectionId", collections[idx]);
 
             documentset.put("Documentset", countJsonObject);
 
