@@ -36,7 +36,7 @@ public class SearchServiceImpl implements SearchService {
     //오타검색을 위한 전체 검색 결과 카운트
     int allTotalCount = 0;
     //디버깅 보기 설정
-    boolean isDebug = true;
+    boolean isDebug = false;
 
     public JSONObject getTotalSearch(Search search) {
         //정타 추천으로도 검색 결과가 없을 경우를 위해 전체 검색 결과 수 초기화
@@ -66,10 +66,11 @@ public class SearchServiceImpl implements SearchService {
 
         JSONObject SearchQueryResultJson = getSearchResult(wnsearch, wncol, collections, search);
 
+        searchResultJson.put("SearchQueryResult", SearchQueryResultJson);
+
         //오타에 대한 정타 추천 검색어
         String typoSearch = search.getTypoSearch();
         String suggestedQuery = wnsearch.suggestedQuery;
-        System.out.println("test" + suggestedQuery);
 
         //오타검색 (전체 검색 결과가 없고 오타 수정 단어가 있을 경우, 오타검색일경우)
         if(allTotalCount <= 0 && !suggestedQuery.equals("") && typoSearch.equals("N")) {
@@ -78,12 +79,10 @@ public class SearchServiceImpl implements SearchService {
 
             //검색어 (오타 → 정타 추천) 수정
             search.setQuery(suggestedQuery);
-
             JSONObject searchResultJsonTemp = getTotalSearch(search);
 
             if(allTotalCount > 0)  searchResultJson = searchResultJsonTemp;
         }
-
         SearchQueryResultJson.put("typoQuery", typoQuery);
         //오타 검색어 초기화
         typoQuery = "";
@@ -93,8 +92,6 @@ public class SearchServiceImpl implements SearchService {
         if (isDebug) {
             System.out.println(debugMsg.replace("<br>", "\n"));
         }
-
-        searchResultJson.put("SearchQueryResult", SearchQueryResultJson);
         return searchResultJson;
     }
 
