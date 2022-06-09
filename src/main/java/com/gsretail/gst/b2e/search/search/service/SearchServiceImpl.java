@@ -47,8 +47,6 @@ public class SearchServiceImpl implements SearchService {
         //오타 후 추천 검색어 화면 출력 여부 체크
         boolean useSuggestedQuery = true;
 
-        JSONObject searchResultJson = new JSONObject();
-
         WNCollection wncol = new WNCollection();
         String collection = search.getCollection();
         String[] searchFields = null;
@@ -84,12 +82,12 @@ public class SearchServiceImpl implements SearchService {
             search.setQuery(suggestedQuery);
 
             //오타로 검색된 기존 결과 Temp 저장
-//            JSONObject searchResultJsonTemp = getTotalSearch(search);
+            JSONObject searchResultJsonTemp = getTotalSearch(search);
 
             //오타 추천 검색 결과가 없을경우 기존 검색결과 사용
-//            if(allTotalCount > 0)  {
-//                searchResultJson = searchResultJsonTemp;
-//            }
+            if(allTotalCount > 0)  {
+                searchResultJson = searchResultJsonTemp;
+            }
         }
 
         //오타 검색어 초기화
@@ -234,7 +232,7 @@ public class SearchServiceImpl implements SearchService {
 
             //categoryquery 설정
             if (!"".equals(search.getCategoryId())) {
-                wnsearch.setCollectionInfoValue(collections[i], CATEGORY_QUERY, search.getCategoryId());
+                wnsearch.setCollectionInfoValue(collections[i], CATEGORY_QUERY, "categoryId|"+search.getCategoryId());
             }
 
             //통합검색시 supermarketItemCode(상품 고유 번호) 이용하여 그룹화
@@ -296,6 +294,8 @@ public class SearchServiceImpl implements SearchService {
             //선택된 컬렉션 documentField 값 생성
             String[] documentFields = wncol.COLLECTION_INFO[collectionIndex][RESULT_FIELD].split(",");
 
+            LinkedHashMap<Integer, Map> documentMap = new LinkedHashMap<>();
+
             for (int i = 0; i < resultCount; i++) {
                 JSONObject searchResultJsonObject = new JSONObject();
                 searchResultJsonObject.put("collectionId", collections[idx]);
@@ -309,6 +309,8 @@ public class SearchServiceImpl implements SearchService {
                         fieldMap.put(documentField, wnsearch.getFieldInGroup(collections[idx], documentField, i, 0));
                     }
                 }
+
+                documentMap.put(i, fieldMap);
                 searchResultJsonObject.put("field", fieldMap);
 
                 documentJsonArray.add(searchResultJsonObject);
