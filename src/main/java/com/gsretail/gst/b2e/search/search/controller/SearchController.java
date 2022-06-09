@@ -55,16 +55,6 @@ public class SearchController {
         return searchResultJson;
     }
 
-    @RequestMapping(value = "/search/v1/test", method = {RequestMethod.POST, RequestMethod.GET})
-    public JSONObject getTest(HttpServletRequest request){
-        Search search = setSearchParameter(request);
-
-        JSONObject searchResultJson = searchService.getTotalSearch(search);
-
-        return searchResultJson;
-    }
-
-
     private Search setSearchParameter(HttpServletRequest request) {
         Search search = null;
 
