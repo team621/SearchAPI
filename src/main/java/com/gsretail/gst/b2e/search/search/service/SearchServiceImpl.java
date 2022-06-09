@@ -232,7 +232,7 @@ public class SearchServiceImpl implements SearchService {
 
             //categoryquery 설정
             if (!"".equals(search.getCategoryId())) {
-                wnsearch.setCollectionInfoValue(collections[i], CATEGORY_QUERY, search.getCategoryId());
+                wnsearch.setCollectionInfoValue(collections[i], CATEGORY_QUERY, "categoryId|" + search.getCategoryId());
             }
 
             //통합검색시 supermarketItemCode(상품 고유 번호) 이용하여 그룹화
