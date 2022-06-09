@@ -109,7 +109,6 @@ public class SearchServiceImpl implements SearchService {
      * @return
      */
     public JSONObject getDeliveryStoreSearch(Search search) {
-        System.out.println("test : start");
         //오타 후 추천 검색어 화면 출력 여부 체크
         boolean useSuggestedQuery = false;
 
@@ -187,7 +186,7 @@ public class SearchServiceImpl implements SearchService {
                 for (int j = 0; j < storeCodeStr.length(); j++) {
                     if (storeCodeStr.charAt(i) == '|') storeCount++;
                 }
-                wnsearch.setCollectionInfoValue(collections[i], PAGE_INFO, search.getStartCount() + "," + storeCount * 2);
+                wnsearch.setCollectionInfoValue(collections[i], PAGE_INFO, 0 + "," + storeCount * 2);
             } else {
                 wnsearch.setCollectionInfoValue(collections[i], PAGE_INFO, search.getStartCount() + "," + search.getListCount());
             }
