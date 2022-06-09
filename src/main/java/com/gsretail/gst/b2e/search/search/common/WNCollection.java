@@ -20,13 +20,13 @@ public class WNCollection {
     static int SEARCH_PORT=5052;
     //운영
     public String[] COLLECTIONS = new String[]{"thefresh" , "oneplus"};
-    static String[] COLLECTIONS_NAME = new String[]{"thefresh" , "oneplus"};
+    public String[] COLLECTIONS_NAME = new String[]{"thefresh" , "oneplus"};
 
     public String[] MERGE_COLLECTIONS = new String[]{""};
 
     public String[][] MERGE_COLLECTION_INFO = null;
 
-    public static String[][] COLLECTION_INFO = new String[][]{
+    public String[][] COLLECTION_INFO = new String[][]{
             {
                     "thefresh", // set collection name
                     "thefresh", // set index name
