@@ -490,22 +490,4 @@ public class WNUtils {
         req_value = req_value.replaceAll(">","");
         return req_value;
     }
-
-    /**
-     * @param search
-     * @param collection
-     * @param flag
-     * @param properties
-     */
-    public static void setCollectionInfoValue(Search search, String collection, String flag, Properties properties){
-        if(flag.equals("COLLECTION") && search.getCollection().equals("ALL")){
-            search.setCollection(properties.getProperty("COLLECTIONS"));
-        }else if(flag.equals("DOCUMENTFIELD")){
-            search.setDocumentField(properties.getProperty(collection.toUpperCase() + ".DOCUMENTFIELD"));
-        }else if(flag.equals("SEARCHFIELD")){
-            search.setSearchField(properties.getProperty(collection.toUpperCase() + ".SEARCHFIELD"));
-        }else if(flag.equals("CATEGORY")){
-            search.setCategoryField(properties.getProperty(collection.toUpperCase() + ".CATEGORY"));
-        }
-    }
 }

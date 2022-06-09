@@ -195,7 +195,7 @@ public class WNSearch {
      * @return 성공이면 0을 반환한다. 실패면 0이 아닌 값을 반환한다.
      */
     public int search(String query, boolean isRealQuery) {
-        return search(query, isRealQuery, null, HI_SUM_ONON, COMMON_OR_WHEN_NORESULT_OFF, CONNECTION_CLOSE, false);
+        return search(query, isRealQuery, null, HI_SUM_ONON, COMMON_OR_WHEN_NORESULT_OFF, CONNECTION_CLOSE, false , true);
     }
 
 
@@ -207,7 +207,7 @@ public class WNSearch {
      * @return 성공이면 0을 반환한다. 실패면 0이 아닌 값을 반환한다.
      */
     public int search(String query, boolean isRealQuery, int useOrResult) {
-        return search(query, isRealQuery, null, HI_SUM_ONON, useOrResult, CONNECTION_CLOSE, false);
+        return search(query, isRealQuery, null, HI_SUM_ONON, useOrResult, CONNECTION_CLOSE, false , true);
     }
 
     /**
@@ -218,9 +218,9 @@ public class WNSearch {
      * @param useSuggestedQuery speller 결과를 사용할 것인지 여부를 결정
      * @return 성공이면 0을 반환한다. 실패면 0이 아닌 값을 반환한다.
      */
-    public int search(String query, boolean isRealQuery, int connectionOpt, boolean useSuggestedQuery) {
+    public int search(String query, boolean isRealQuery, int connectionOpt, boolean useSuggestedQuery , boolean queryLog) {
         this.connectionOpt = connectionOpt;
-        return search(query, isRealQuery, null, HI_SUM_ONON, COMMON_OR_WHEN_NORESULT_OFF, connectionOpt, useSuggestedQuery);
+        return search(query, isRealQuery, null, HI_SUM_ONON, COMMON_OR_WHEN_NORESULT_OFF, connectionOpt, useSuggestedQuery , queryLog);
     }
 
 
@@ -235,7 +235,7 @@ public class WNSearch {
      */
     public int search(String query, boolean isRealQuery, int useOrResult, int connectionOpt, boolean useSuggestedQuery) {
         this.connectionOpt = connectionOpt;
-        return search(query, isRealQuery, null, HI_SUM_ONON, useOrResult, connectionOpt, useSuggestedQuery);
+        return search(query, isRealQuery, null, HI_SUM_ONON, useOrResult, connectionOpt, useSuggestedQuery , true);
     }
 
     /**
@@ -248,9 +248,9 @@ public class WNSearch {
      * @param useSuggestedQuery speller 결과를 사용할 것인지 여부를 결정
      * @return 성공이면 0을 반환한다. 실패면 0이 아닌 값을 반환한다.
      */
-    public int search(String query, boolean isRealQuery, int useOrResult, int connectionOpt, int hiSum, boolean useSuggestedQuery) {
+    public int search(String query, boolean isRealQuery, int useOrResult, int connectionOpt, int hiSum, boolean useSuggestedQuery ,boolean queryLog) {
         this.connectionOpt = connectionOpt;
-        return search(query, isRealQuery, null, hiSum, useOrResult, connectionOpt, useSuggestedQuery);
+        return search(query, isRealQuery, null, hiSum, useOrResult, connectionOpt, useSuggestedQuery , queryLog);
     }
 
     /**
@@ -264,12 +264,12 @@ public class WNSearch {
      * @param useSuggestedQuery speller 결과를 사용할 것인지 여부를 결정
      * @return 성공이면 0을 반환한다. 실패면 0이 아닌 값을 반환한다.
      */
-    private int search(String query, boolean isRealQuery, String[] userInfo, int hiSum, int useOrResult, int connectionOpt, boolean useSuggestedQuery) {
+    private int search(String query, boolean isRealQuery, String[] userInfo, int hiSum, int useOrResult, int connectionOpt, boolean useSuggestedQuery , boolean queryLog) {
         this.connectionOpt = connectionOpt;
         this.hiSum = hiSum;
         int ret = 0;
         if(!isUidSrch) {
-            ret = common.setCommonQuery(query, CHARSET, useOrResult, useSuggestedQuery, userInfo);
+            ret = common.setCommonQuery(query, CHARSET, useOrResult, useSuggestedQuery, userInfo , queryLog);
         } else {
             ret = common.setUidQuery(CHARSET);
         }

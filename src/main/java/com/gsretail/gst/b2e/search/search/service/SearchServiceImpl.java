@@ -64,7 +64,7 @@ public class SearchServiceImpl implements SearchService {
         setCollectionInfo(wnsearch, collections, search, "totalSearch");
 
         //검색 수행
-        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery);
+        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery , true);
 
         //검색결과 생성
         JSONObject searchResultJson = getSearchResult(wnsearch, wncol, collections, search);
@@ -82,12 +82,12 @@ public class SearchServiceImpl implements SearchService {
             search.setQuery(suggestedQuery);
 
             //오타로 검색된 기존 결과 Temp 저장
-            JSONObject searchResultJsonTemp = getTotalSearch(search);
+//            JSONObject searchResultJsonTemp = getTotalSearch(search);
 
             //오타 추천 검색 결과가 없을경우 기존 검색결과 사용
-            if(allTotalCount > 0)  {
-                searchResultJson = searchResultJsonTemp;
-            }
+//            if(allTotalCount > 0)  {
+//                searchResultJson = searchResultJsonTemp;
+//            }
         }
 
         //오타 검색어 초기화
@@ -129,8 +129,8 @@ public class SearchServiceImpl implements SearchService {
         //컬렉션 정보 설정
         setCollectionInfo(wnsearch, collections, search, "storeSearch");
 
-        //1. 조건에 맞는 매장 코드 검색 수행
-        wnsearch.search(search.getQuery(), false, CONNECTION_REUSE, useSuggestedQuery);
+        //1. 조건에 맞는 매장 코드 검색 수행 (queryLog 출력안함)
+        wnsearch.search(search.getQuery(), false, CONNECTION_REUSE, useSuggestedQuery , false);
 
         //1번 검색 수행 결과 이용한 상품출력할 매장 코드 생성
         String storeCode = "";
@@ -155,7 +155,7 @@ public class SearchServiceImpl implements SearchService {
         setCollectionInfo(wnsearch, collections, search, "totalSearch");
 
         //통합검색 수행
-        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery);
+        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery , true);
 
         //결과값 생성
         JSONObject searchResultJson = getSearchResult(wnsearch, wncol, collections, search);
@@ -232,7 +232,7 @@ public class SearchServiceImpl implements SearchService {
 
             //categoryquery 설정
             if (!"".equals(search.getCategoryId())) {
-                wnsearch.setCollectionInfoValue(collections[i], CATEGORY_QUERY, "categoryId|"+search.getCategoryId());
+                wnsearch.setCollectionInfoValue(collections[i], CATEGORY_QUERY, "categoryId|" + search.getCategoryId());
             }
 
             //통합검색시 supermarketItemCode(상품 고유 번호) 이용하여 그룹화
@@ -294,11 +294,8 @@ public class SearchServiceImpl implements SearchService {
             //선택된 컬렉션 documentField 값 생성
             String[] documentFields = wncol.COLLECTION_INFO[collectionIndex][RESULT_FIELD].split(",");
 
-            LinkedHashMap<Integer, Map> documentMap = new LinkedHashMap<>();
-
+            List<Map<String, Map<String, String>>> fieldList = new ArrayList<>();
             for (int i = 0; i < resultCount; i++) {
-                JSONObject searchResultJsonObject = new JSONObject();
-                searchResultJsonObject.put("collectionId", collections[idx]);
                 Map<String , String> fieldMap = new HashMap<String , String>();
 
                 //supermarketItemCode로 그룹화 하는 컬렉션 분기하여 결과값 생성
@@ -310,10 +307,12 @@ public class SearchServiceImpl implements SearchService {
                     }
                 }
 
-                documentMap.put(i, fieldMap);
-                searchResultJsonObject.put("field", fieldMap);
+                Map<String , Map<String , String>> fieldListMap = new HashMap<String , Map<String , String>>();
 
-                documentJsonArray.add(searchResultJsonObject);
+                fieldListMap.put("field" , fieldMap);
+
+                fieldList.add(fieldListMap);
+
             }
 
             //카테고리 리스트 출력
@@ -337,9 +336,9 @@ public class SearchServiceImpl implements SearchService {
                 categoryListMap.put(categoryName, categoryCnt);
             }
 
-            countJsonObject.put("Document", documentJsonArray);
+            countJsonObject.put("Document", fieldList);
 
-            documentset.put("id", collections[idx]);
+            documentset.put("CollectionId", collections[idx]);
 
             documentset.put("Documentset", countJsonObject);
 
