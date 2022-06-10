@@ -33,7 +33,7 @@ public class SearchServiceImpl implements SearchService {
     //오타검색을 위한 전체 검색 결과 카운트
     int allTotalCount = 0;
     //디버깅 보기 설정
-    boolean isDebug = true;
+    boolean isDebug = false;
 
     /**
      * 통합검색
@@ -92,7 +92,7 @@ public class SearchServiceImpl implements SearchService {
 
             //오타 추천 검색 결과가 없을경우 기존 검색결과 사용
             if(allTotalCount > 0)  {
-                searchResultJson = searchResultJsonTemp;
+                searchResult = searchResultJsonTemp;
             }
         }
 
@@ -141,6 +141,7 @@ public class SearchServiceImpl implements SearchService {
         String storeCode = "";
         for (int i = 0; i < collections.length; i++) {
             int resultCount = wnsearch.getResultGroupCount(collections[i]);
+            System.out.println("resultCount = " + resultCount);
             for (int j = 0; j < resultCount; j++) {
                 if (resultCount == 1 || j + 1 == resultCount) {
                     storeCode += wnsearch.getFieldInGroup(collections[i], "storeCode", j, 0);
@@ -191,9 +192,11 @@ public class SearchServiceImpl implements SearchService {
             if (flag.equals("storeSearch")) {
                 int storeCount = 1;
                 String storeCodeStr = search.getStoreCode();
+                System.out.println("storeCodeStr = " + storeCodeStr);
                 for (int j = 0; j < storeCodeStr.length(); j++) {
                     if (storeCodeStr.charAt(j) == '|') storeCount++;
                 }
+                System.out.println("storecout = " + storeCount);
                 wnsearch.setCollectionInfoValue(collections[i], PAGE_INFO, 0 + "," + storeCount * 2);
             } else {
                 wnsearch.setCollectionInfoValue(collections[i], PAGE_INFO, search.getStartCount() + "," + search.getListCount());
@@ -244,7 +247,7 @@ public class SearchServiceImpl implements SearchService {
 
             //통합검색시 supermarketItemCode(상품 고유 번호) 이용하여 그룹화
             if (!flag.equals("storeSearch")) {
-                if (collections[i].equals("thefresh")) {
+                if (collections[i].equals("thefresh") || collections[i].equals("woodel_gs")) {
                     wnsearch.setCollectionInfoValue(collections[i], GROUP_BY, "supermarketItemCode,1");
                     wnsearch.setCollectionInfoValue(collections[i], GROUP_SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
                 }
