@@ -82,12 +82,12 @@ public class SearchServiceImpl implements SearchService {
             search.setQuery(suggestedQuery);
 
             //오타로 검색된 기존 결과 Temp 저장
-//            JSONObject searchResultJsonTemp = getTotalSearch(search);
+            JSONObject searchResultJsonTemp = getTotalSearch(search);
 
             //오타 추천 검색 결과가 없을경우 기존 검색결과 사용
-//            if(allTotalCount > 0)  {
-//                searchResultJson = searchResultJsonTemp;
-//            }
+            if(allTotalCount > 0)  {
+                searchResultJson = searchResultJsonTemp;
+            }
         }
 
         //오타 검색어 초기화
@@ -184,20 +184,19 @@ public class SearchServiceImpl implements SearchService {
                 int storeCount = 1;
                 String storeCodeStr = search.getStoreCode();
                 for (int j = 0; j < storeCodeStr.length(); j++) {
-                    if (storeCodeStr.charAt(i) == '|') storeCount++;
+                    if (storeCodeStr.charAt(j) == '|') storeCount++;
                 }
                 wnsearch.setCollectionInfoValue(collections[i], PAGE_INFO, 0 + "," + storeCount * 2);
             } else {
                 wnsearch.setCollectionInfoValue(collections[i], PAGE_INFO, search.getStartCount() + "," + search.getListCount());
             }
 
-
             //검색어가 없으면 DATE_RANGE 로 전체 데이터 출력
             if (!"".equals(search.getQuery())) {
                 wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
             } else {
                 wnsearch.setCollectionInfoValue(collections[i], DATE_RANGE, search.getStartDate().replaceAll("[.]", "/") + ",2030/01/01,-");
-                wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, "DATE/DESC");
+                wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
             }
 
             //searchField 값이 있으면 설정, 없으면 기본검색필드
@@ -236,7 +235,7 @@ public class SearchServiceImpl implements SearchService {
 
             //통합검색시 supermarketItemCode(상품 고유 번호) 이용하여 그룹화
             if (!flag.equals("storeSearch")) {
-                if (collections[i].equals("thefresh")) {
+                if (collections[i].equals("thefresh") || collections[i].equals("thefresh_category")) {
                     wnsearch.setCollectionInfoValue(collections[i], GROUP_BY, "supermarketItemCode,1");
                     wnsearch.setCollectionInfoValue(collections[i], GROUP_SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
                 }
@@ -271,7 +270,7 @@ public class SearchServiceImpl implements SearchService {
             int totalCount = 0;
 
             //supermarketItemCode로 그룹화 하는 컬렉션 선별하여 검색 결과 count 생성
-            if (collections[idx].equals("oneplus") || collections[idx].equals("상품권") || collections[idx].equals("매장") || collections[idx].equals("아동급식")) {
+            if (collections[idx].equals("oneplus") || collections[idx].equals("oneplus") || collections[idx].equals("상품권") || collections[idx].equals("매장") || collections[idx].equals("아동급식")) {
                 resultCount = wnsearch.getResultCount(collections[idx]);
                 totalCount = wnsearch.getResultTotalCount(collections[idx]);
             } else {
@@ -299,7 +298,7 @@ public class SearchServiceImpl implements SearchService {
 
                 //supermarketItemCode로 그룹화 하는 컬렉션 분기하여 결과값 생성
                 for (String documentField : documentFields) {
-                    if (collections[idx].equals("oneplus") || collections[idx].equals("상품권") || collections[idx].equals("매장") || collections[idx].equals("아동급식")) {
+                    if (collections[idx].equals("oneplus") || collections[idx].equals("oneplus") || collections[idx].equals("상품권") || collections[idx].equals("매장") || collections[idx].equals("아동급식")) {
                         fieldMap.put(documentField, wnsearch.getField(collections[idx], documentField, i, false));
                     } else {
                         fieldMap.put(documentField, wnsearch.getFieldInGroup(collections[idx], documentField, i, 0));
