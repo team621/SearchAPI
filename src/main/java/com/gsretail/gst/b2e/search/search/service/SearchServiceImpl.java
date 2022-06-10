@@ -33,7 +33,7 @@ public class SearchServiceImpl implements SearchService {
     //오타검색을 위한 전체 검색 결과 카운트
     int allTotalCount = 0;
     //디버깅 보기 설정
-    boolean isDebug = false;
+    boolean isDebug = true;
 
     /**
      * 통합검색
@@ -141,17 +141,18 @@ public class SearchServiceImpl implements SearchService {
         String storeCode = "";
         for (int i = 0; i < collections.length; i++) {
             int resultCount = wnsearch.getResultGroupCount(collections[i]);
-            System.out.println("resultCount = " + resultCount);
             for (int j = 0; j < resultCount; j++) {
-                if (resultCount == 1 || j + 1 == resultCount) {
+                if ((i == collections.length -1) && (resultCount == 1 || j + 1 == resultCount)) {
                     storeCode += wnsearch.getFieldInGroup(collections[i], "storeCode", j, 0);
                 } else {
                     storeCode += wnsearch.getFieldInGroup(collections[i], "storeCode", j, 0) + "|";
                 }
             }
         }
+
         //통합검색에 사용될 storeCode 저장
         search.setStoreCode(storeCode);
+
 
         //통합검색은 선택된 매장의 상품목록 검색으로 상품코드 삭제
         search.setSupermarketItemCode("");
@@ -192,12 +193,10 @@ public class SearchServiceImpl implements SearchService {
             if (flag.equals("storeSearch")) {
                 int storeCount = 1;
                 String storeCodeStr = search.getStoreCode();
-                System.out.println("storeCodeStr = " + storeCodeStr);
                 for (int j = 0; j < storeCodeStr.length(); j++) {
                     if (storeCodeStr.charAt(j) == '|') storeCount++;
                 }
-                System.out.println("storecout = " + storeCount);
-                wnsearch.setCollectionInfoValue(collections[i], PAGE_INFO, 0 + "," + storeCount * 2);
+                wnsearch.setCollectionInfoValue(collections[i], PAGE_INFO, 0 + "," + storeCount);
             } else {
                 wnsearch.setCollectionInfoValue(collections[i], PAGE_INFO, search.getStartCount() + "," + search.getListCount());
             }
@@ -246,7 +245,7 @@ public class SearchServiceImpl implements SearchService {
             }
 
             //통합검색시 supermarketItemCode(상품 고유 번호) 이용하여 그룹화
-            if (!flag.equals("storeSearch")) {
+            if (flag.equals("totalSearch")) {
                 if (collections[i].equals("thefresh") || collections[i].equals("woodel_gs")) {
                     wnsearch.setCollectionInfoValue(collections[i], GROUP_BY, "supermarketItemCode,1");
                     wnsearch.setCollectionInfoValue(collections[i], GROUP_SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
