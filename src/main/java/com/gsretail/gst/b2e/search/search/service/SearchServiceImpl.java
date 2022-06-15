@@ -141,7 +141,6 @@ public class SearchServiceImpl implements SearchService {
         String storeCode = "";
         for (int i = 0; i < collections.length; i++) {
             int resultCount = wnsearch.getResultGroupCount(collections[i]);
-            System.out.println("resultCount = " + resultCount);
             for (int j = 0; j < resultCount; j++) {
                 if (resultCount == 1 || j + 1 == resultCount) {
                     storeCode += wnsearch.getFieldInGroup(collections[i], "storeCode", j, 0);
@@ -150,6 +149,7 @@ public class SearchServiceImpl implements SearchService {
                 }
             }
         }
+
         //통합검색에 사용될 storeCode 저장
         search.setStoreCode(storeCode);
 
@@ -192,11 +192,9 @@ public class SearchServiceImpl implements SearchService {
             if (flag.equals("storeSearch")) {
                 int storeCount = 1;
                 String storeCodeStr = search.getStoreCode();
-                System.out.println("storeCodeStr = " + storeCodeStr);
                 for (int j = 0; j < storeCodeStr.length(); j++) {
                     if (storeCodeStr.charAt(j) == '|') storeCount++;
                 }
-                System.out.println("storecout = " + storeCount);
                 wnsearch.setCollectionInfoValue(collections[i], PAGE_INFO, 0 + "," + storeCount * 2);
             } else {
                 wnsearch.setCollectionInfoValue(collections[i], PAGE_INFO, search.getStartCount() + "," + search.getListCount());
@@ -440,11 +438,19 @@ public class SearchServiceImpl implements SearchService {
         if (!"".equals(prmByQty)) exquery += mkExqueryString(prmByQty, "prmByQty");
 
         String prmGtQty = search.getPrmGtQty();
-        if (!"".equals(prmGtQty)) exquery += mkExqueryString(prmByQty, "prmGtQty");
+        if (!"".equals(prmGtQty)) exquery += mkExqueryString(prmGtQty, "prmGtQty");
 
         String stockSupermarketItemCode = search.getStockSupermarketItemCode();
         if (!"".equals(stockSupermarketItemCode))
             exquery += mkExqueryString(stockSupermarketItemCode, "supermarketItemCode");
+
+        String wdlvyItemSpCd = search.getWdlvyItemSpCd();
+        if(!"".equals(wdlvyItemSpCd))
+            exquery += mkExqueryString(wdlvyItemSpCd, "wdlvyItemSpCd");
+
+        String optItemIncldYn = search.getOptItemIncldYn();
+        if(!"".equals(optItemIncldYn))
+            exquery += mkExqueryString(optItemIncldYn, "optItemIncldYn");
 
         return exquery;
     }
