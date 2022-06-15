@@ -296,8 +296,6 @@ public class SearchServiceImpl implements SearchService {
             countJsonObject.put("resultCount", resultCount);
             countJsonObject.put("totalCount", totalCount);
 
-            JSONArray documentJsonArray = new JSONArray();
-
             //선택된 컬렉션이 WNCollection 몇번째 인지 index값
             int collectionIndex = wnsearch.getCollIdx(collections[idx]);
             //선택된 컬렉션 documentField 값 생성
@@ -366,12 +364,7 @@ public class SearchServiceImpl implements SearchService {
 
         //카테고리 리스트 내림 차순 정렬
         List<Map.Entry<String, Integer>> entryCategoryList = new LinkedList<>(categoryListMap.entrySet());
-        entryCategoryList.sort(new Comparator<Map.Entry<String, Integer>>() {
-            @Override
-            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-                return o2.getValue() - o1.getValue();
-            }
-        });
+        entryCategoryList.sort((o1, o2) -> o2.getValue() - o1.getValue());
 
         List<String> categoryList = new ArrayList<>();
 
