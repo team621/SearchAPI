@@ -19,8 +19,8 @@ public class WNCollection {
     static String SEARCH_IP="27.122.138.23";
     static int SEARCH_PORT=5052;
     //운영
-    public String[] COLLECTIONS = new String[]{"oneplus", "thefresh", "woodel_gs"};
-    public String[] COLLECTIONS_NAME = new String[]{"oneplus", "thefresh", "woodel_gs"};
+    public String[] COLLECTIONS = new String[]{"oneplus","thefresh","woodel_gs"};
+    public String[] COLLECTIONS_NAME = new String[]{"oneplus","thefresh","woodel_gs"};
 
     public String[] MERGE_COLLECTIONS = new String[]{""};
 
