@@ -239,8 +239,13 @@ public class SearchServiceImpl implements SearchService {
             wnsearch.setCollectionInfoValue(collections[i], FILTER_OPERATION, "<sellPrice:gt:" + search.getMinSellPrice() + "> <sellPrice:lt:" + search.getMaxSellPrice() + ">");
 
             //categoryquery 설정
+            String[] categories = search.getArrays(search.getCategoryId());
+            String categoryQuery = "";
+            for (String category : categories) {
+                categoryQuery += "categoryId|"+category+",";
+            }
             if (!"".equals(search.getCategoryId())) {
-                wnsearch.setCollectionInfoValue(collections[i], CATEGORY_QUERY, "categoryId|" + search.getCategoryId());
+                wnsearch.setCollectionInfoValue(collections[i], CATEGORY_QUERY, categoryQuery);
             }
 
             //통합검색시 supermarketItemCode(상품 고유 번호) 이용하여 그룹화
