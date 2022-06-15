@@ -7,6 +7,9 @@
 
 package com.gsretail.gst.b2e.search.search.model;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.json.simple.JSONObject;
 
 import java.text.SimpleDateFormat;
@@ -20,6 +23,9 @@ import java.util.Date;
  * @date : 2022-05-16
  * @tags :
  */
+@Data
+@Getter
+@Setter
 public class Search {
 
     private String query;
@@ -56,6 +62,8 @@ public class Search {
     private String storeCode;
     private String supermarketItemCode;
     private String StockSupermarketItemCode;
+    private String wdlvyItemSpCd;
+    private String optItemIncldYn;
 
     public Search() {}
 
@@ -97,6 +105,8 @@ public class Search {
         this.prmByQty = nullCheckJsonParameter(jsonObj , "prmByQty" , "");
         this.prmGtQty = nullCheckJsonParameter(jsonObj , "prmGtQty" , "");
         this.StockSupermarketItemCode = nullCheckJsonParameter(jsonObj,"StockSupermarketItemCode","");
+        this.wdlvyItemSpCd = nullCheckJsonParameter(jsonObj, "wdlvyItemSpCd", "");
+        this.optItemIncldYn = nullCheckJsonParameter(jsonObj, "optItemIncldYn", "");
     }
 
     /**
@@ -125,277 +135,5 @@ public class Search {
         if(parameterResult.equals("")) parameterResult = defaultValue;
 
         return parameterResult;
-    }
-
-    public String getQuery() {
-        return query;
-    }
-
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
-    public String getCollection() {
-        return collection;
-    }
-
-    public void setCollection(String collection) {
-        this.collection = collection;
-    }
-
-    public String getSort() {
-        return sort;
-    }
-
-    public void setSort(String sort) {
-        this.sort = sort;
-    }
-
-    public int getStartCount() {
-        return startCount;
-    }
-
-    public void setStartCount(int startCount) {
-        this.startCount = startCount;
-    }
-
-    public int getListCount() {
-        return listCount;
-    }
-
-    public void setListCount(int listCount) {
-        this.listCount = listCount;
-    }
-
-    public int getStoreCount() {
-        return storeCount;
-    }
-
-    public void setStoreCount(int storeCount) {
-        this.storeCount = storeCount;
-    }
-
-    public String getDocumentField() {
-        return documentField;
-    }
-
-    public void setDocumentField(String documentField) {
-        this.documentField = documentField;
-    }
-
-    public String getSearchField() {
-        return searchField;
-    }
-
-    public void setSearchField(String searchField) {
-        this.searchField = searchField;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
-
-    public String getServiceCode() {
-        return serviceCode;
-    }
-
-    public void setServiceCode(String serviceCode) {
-        this.serviceCode = serviceCode;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
-
-    public String getDiscountTag() {
-        return discountTag;
-    }
-
-    public void setDiscountTag(String discountTag) {
-        this.discountTag = discountTag;
-    }
-
-    public String getServiceTag() {
-        return serviceTag;
-    }
-
-    public void setServiceTag(String serviceTag) {
-        this.serviceTag = serviceTag;
-    }
-
-    public String getWine25ItemKindName() {
-        return wine25ItemKindName;
-    }
-
-    public void setWine25ItemKindName(String wine25ItemKindName) {
-        this.wine25ItemKindName = wine25ItemKindName;
-    }
-
-    public String getWine25RegionSpName() {
-        return wine25RegionSpName;
-    }
-
-    public void setWine25RegionSpName(String wine25RegionSpName) {
-        this.wine25RegionSpName = wine25RegionSpName;
-    }
-
-    public String getItemCode() {
-        return itemCode;
-    }
-
-    public void setItemCode(String itemCode) {
-        this.itemCode = itemCode;
-    }
-
-    public String getCardDiscountName() {
-        return cardDiscountName;
-    }
-
-    public void setCardDiscountName(String cardDiscountName) {
-        this.cardDiscountName = cardDiscountName;
-    }
-
-    public String getCardDiscountYn() {
-        return cardDiscountYn;
-    }
-
-    public void setCardDiscountYn(String cardDiscountYn) {
-        this.cardDiscountYn = cardDiscountYn;
-    }
-
-    public String getAdultYn() {
-        return adultYn;
-    }
-
-    public void setAdultYn(String adultYn) {
-        this.adultYn = adultYn;
-    }
-
-    public String getSoldOutSp() {
-        return soldOutSp;
-    }
-
-    public void setSoldOutSp(String soldOutSp) {
-        this.soldOutSp = soldOutSp;
-    }
-
-    public String getDeliverySp() {
-        return deliverySp;
-    }
-
-    public void setDeliverySp(String deliverySp) {
-        this.deliverySp = deliverySp;
-    }
-
-    public String getStockCheckYn() {
-        return stockCheckYn;
-    }
-
-    public void setStockCheckYn(String stockCheckYn) {
-        this.stockCheckYn = stockCheckYn;
-    }
-
-    public String getRecommendItemYn() {
-        return recommendItemYn;
-    }
-
-    public void setRecommendItemYn(String recommendItemYn) {
-        this.recommendItemYn = recommendItemYn;
-    }
-
-    public String getMaxSellPrice() {
-        return maxSellPrice;
-    }
-
-    public void setMaxSellPrice(String maxSellPrice) {
-        this.maxSellPrice = maxSellPrice;
-    }
-
-    public String getMinSellPrice() {
-        return minSellPrice;
-    }
-
-    public void setMinSellPrice(String minSellPrice) {
-        this.minSellPrice = minSellPrice;
-    }
-
-    public String getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
-    }
-
-    public String getTypoSearch() {
-        return typoSearch;
-    }
-
-    public void setTypoSearch(String typoSearch) {
-        this.typoSearch = typoSearch;
-    }
-
-    public String getCategoryField() {
-        return categoryField;
-    }
-
-    public void setCategoryField(String categoryField) {
-        this.categoryField = categoryField;
-    }
-
-    public void setPrmByQty(String prmByQty) {
-        this.prmByQty = prmByQty;
-    }
-
-    public String getPrmGtQty() {
-        return prmGtQty;
-    }
-
-    public void setPrmGtQty(String prmGtQty) {
-        this.prmGtQty = prmGtQty;
-    }
-
-    public String getStoreCode() {
-        return storeCode;
-    }
-
-    public void setStoreCode(String storeCode) {
-        this.storeCode = storeCode;
-    }
-
-    public String getSupermarketItemCode() {
-        return supermarketItemCode;
-    }
-
-    public String getPrmByQty() {
-        return prmByQty;
-    }
-
-    public void setSupermarketItemCode(String supermarketItemCode) {
-        this.supermarketItemCode = supermarketItemCode;
-    }
-
-    public String getStockSupermarketItemCode() {
-        return StockSupermarketItemCode;
-    }
-
-    public void setStockSupermarketItemCode(String stockSupermarketItemCode) {
-        StockSupermarketItemCode = stockSupermarketItemCode;
     }
 }

@@ -432,11 +432,19 @@ public class SearchServiceImpl implements SearchService {
         if (!"".equals(prmByQty)) exquery += mkExqueryString(prmByQty, "prmByQty");
 
         String prmGtQty = search.getPrmGtQty();
-        if (!"".equals(prmGtQty)) exquery += mkExqueryString(prmByQty, "prmGtQty");
+        if (!"".equals(prmGtQty)) exquery += mkExqueryString(prmGtQty, "prmGtQty");
 
         String stockSupermarketItemCode = search.getStockSupermarketItemCode();
         if (!"".equals(stockSupermarketItemCode))
             exquery += mkExqueryString(stockSupermarketItemCode, "supermarketItemCode");
+
+        String wdlvyItemSpCd = search.getWdlvyItemSpCd();
+        if(!"".equals(wdlvyItemSpCd))
+            exquery += mkExqueryString(wdlvyItemSpCd, "wdlvyItemSpCd");
+
+        String optItemIncldYn = search.getOptItemIncldYn();
+        if(!"".equals(optItemIncldYn))
+            exquery += mkExqueryString(optItemIncldYn, "optItemIncldYn");
 
         return exquery;
     }
