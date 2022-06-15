@@ -153,7 +153,6 @@ public class SearchServiceImpl implements SearchService {
         //통합검색에 사용될 storeCode 저장
         search.setStoreCode(storeCode);
 
-
         //통합검색은 선택된 매장의 상품목록 검색으로 상품코드 삭제
         search.setSupermarketItemCode("");
 
@@ -236,12 +235,16 @@ public class SearchServiceImpl implements SearchService {
                 wnsearch.setCollectionInfoValue(collections[i], EXQUERY_FIELD, exquery);
             }
 
+            System.out.println(exquery);
+
             //filterquery 설정
             wnsearch.setCollectionInfoValue(collections[i], FILTER_OPERATION, "<sellPrice:gt:" + search.getMinSellPrice() + "> <sellPrice:lt:" + search.getMaxSellPrice() + ">");
 
             //categoryquery 설정
-            if (!"".equals(search.getCategoryId())) {
-                wnsearch.setCollectionInfoValue(collections[i], CATEGORY_QUERY, "categoryId|" + search.getCategoryId());
+            if(!collections[i].startsWith("category")) {
+                if (!"".equals(search.getCategoryId())) {
+                    wnsearch.setCollectionInfoValue(collections[i], CATEGORY_QUERY, "categoryId|" + search.getCategoryId());
+                }
             }
 
             //통합검색시 supermarketItemCode(상품 고유 번호) 이용하여 그룹화
@@ -250,7 +253,7 @@ public class SearchServiceImpl implements SearchService {
                     wnsearch.setCollectionInfoValue(collections[i], GROUP_BY, "supermarketItemCode,1");
                     wnsearch.setCollectionInfoValue(collections[i], GROUP_SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
                 }
-            }else if(flag.equals("storeSearch")){
+            }else if(flag.equals("storeSearch")){//딜리버리 깔대기 검색시 매장코드로 그룹화
                 wnsearch.setCollectionInfoValue(collections[i], GROUP_BY, "storeCode,1");
                 wnsearch.setCollectionInfoValue(collections[i], GROUP_SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
             }
@@ -277,59 +280,62 @@ public class SearchServiceImpl implements SearchService {
 
         //컬렉션별 검색 결과 생성
         for (int idx = 0; idx < collections.length; idx++) {
-            JSONObject documentset = new JSONObject();
-            int resultCount = 0;
-            int totalCount = 0;
+            if (!collections[idx].startsWith("category")) {
+                JSONObject documentset = new JSONObject();
+                int resultCount = 0;
+                int totalCount = 0;
 
-            //supermarketItemCode로 그룹화 하는 컬렉션 선별하여 검색 결과 count 생성
-            if (collections[idx].equals("oneplus") || collections[idx].equals("상품권") || collections[idx].equals("매장") || collections[idx].equals("아동급식")) {
-                resultCount = wnsearch.getResultCount(collections[idx]);
-                totalCount = wnsearch.getResultTotalCount(collections[idx]);
-            } else {
-                resultCount = wnsearch.getResultGroupCount(collections[idx]);
-                totalCount = wnsearch.getResultTotalGroupCount(collections[idx]);
-            }
-
-            //오타 검색 결과값 확인용
-            allTotalCount += totalCount;
-
-            JSONObject countJsonObject = new JSONObject();
-            countJsonObject.put("resultCount", resultCount);
-            countJsonObject.put("totalCount", totalCount);
-
-            //선택된 컬렉션이 WNCollection 몇번째 인지 index값
-            int collectionIndex = wnsearch.getCollIdx(collections[idx]);
-            //선택된 컬렉션 documentField 값 생성
-            String[] documentFields = wncol.COLLECTION_INFO[collectionIndex][RESULT_FIELD].split(",");
-
-            List<Map<String, Map<String, String>>> fieldList = new ArrayList<>();
-            for (int i = 0; i < resultCount; i++) {
-                Map<String , String> fieldMap = new HashMap<String , String>();
-
-                //supermarketItemCode로 그룹화 하는 컬렉션 분기하여 결과값 생성
-                for (String documentField : documentFields) {
-                    if (collections[idx].equals("oneplus") || collections[idx].equals("상품권") || collections[idx].equals("매장") || collections[idx].equals("아동급식")) {
-                        fieldMap.put(documentField, wnsearch.getField(collections[idx], documentField, i, false));
-                    } else {
-                        fieldMap.put(documentField, wnsearch.getFieldInGroup(collections[idx], documentField, i, 0));
-                    }
+                //supermarketItemCode로 그룹화 하는 컬렉션 선별하여 검색 결과 count 생성
+                if (collections[idx].equals("oneplus") || collections[idx].equals("상품권") || collections[idx].equals("매장") || collections[idx].equals("아동급식")) {
+                    resultCount = wnsearch.getResultCount(collections[idx]);
+                    totalCount = wnsearch.getResultTotalCount(collections[idx]);
+                } else {
+                    resultCount = wnsearch.getResultGroupCount(collections[idx]);
+                    totalCount = wnsearch.getResultTotalGroupCount(collections[idx]);
                 }
 
-                Map<String , Map<String , String>> fieldListMap = new HashMap<String , Map<String , String>>();
+                //오타 검색 결과값 확인용
+                allTotalCount += totalCount;
 
-                fieldListMap.put("field" , fieldMap);
+                JSONObject countJsonObject = new JSONObject();
+                //컬렉션별 검색 결과건수 저장
+                countJsonObject.put("resultCount", resultCount);
+                countJsonObject.put("totalCount", totalCount);
 
-                fieldList.add(fieldListMap);
+                //선택된 컬렉션이 WNCollection 몇번째 인지 index값
+                int collectionIndex = wnsearch.getCollIdx(collections[idx]);
+                //선택된 컬렉션 documentField 값 생성
+                String[] documentFields = wncol.COLLECTION_INFO[collectionIndex][RESULT_FIELD].split(",");
 
+                List<Map<String, Map<String, String>>> fieldList = new ArrayList<>();
+                for (int i = 0; i < resultCount; i++) {
+                    Map<String, String> fieldMap = new HashMap<String, String>();
+
+                    //supermarketItemCode로 그룹화 하는 컬렉션 분기하여 결과값 생성
+                    for (String documentField : documentFields) {
+                        if (collections[idx].equals("oneplus") || collections[idx].equals("상품권") || collections[idx].equals("매장") || collections[idx].equals("아동급식")) {
+                            fieldMap.put(documentField, wnsearch.getField(collections[idx], documentField, i, false));
+                        } else {
+                            fieldMap.put(documentField, wnsearch.getFieldInGroup(collections[idx], documentField, i, 0));
+                        }
+                    }
+
+                    Map<String, Map<String, String>> fieldListMap = new HashMap<String, Map<String, String>>();
+
+                    fieldListMap.put("field", fieldMap);
+
+                    fieldList.add(fieldListMap);
+
+                }
+
+                countJsonObject.put("Document", fieldList);
+
+                documentset.put("CollectionId", collections[idx]);
+
+                documentset.put("Documentset", countJsonObject);
+
+                collectionJsonArray.add(documentset);
             }
-
-            countJsonObject.put("Document", fieldList);
-
-            documentset.put("CollectionId", collections[idx]);
-
-            documentset.put("Documentset", countJsonObject);
-
-            collectionJsonArray.add(documentset);
         }
         searchResultMap.put("Collection", collectionJsonArray);
 
@@ -339,27 +345,30 @@ public class SearchServiceImpl implements SearchService {
     private Object getCategoryList(WNSearch wnsearch, WNCollection wncol, String[] collections) {
         Map<String, Integer> categoryListMap = new HashMap<>();
         for (int idx = 0; idx < collections.length; idx++) {
-            //collection index 확인
-            int collectionIndex = wnsearch.getCollIdx(collections[idx]);
-            //카테고리 리스트 출력
-            String[] categoryFieldList = wncol.COLLECTION_INFO[collectionIndex][CATEGORY_GROUPBY].split("\\|");
-            //categoryGroupBy 필드명
-            String categoryField = categoryFieldList[1].split(":")[0];
-            //categoryGroupBy dept
-            String categoryDept = categoryFieldList[1].split(":")[1];
+            //가상컬렉션 이용한 카테고리 리스트 출력
+            if (collections[idx].startsWith("category")) {
+                //collection index 확인
+                int collectionIndex = wnsearch.getCollIdx(collections[idx]);
+                //카테고리 리스트 출력
+                String[] categoryFieldList = wncol.COLLECTION_INFO[collectionIndex][CATEGORY_GROUPBY].split("\\|");
+                //categoryGroupBy 필드명
+                String categoryField = categoryFieldList[1].split(":")[0];
+                //categoryGroupBy dept
+                String categoryDept = categoryFieldList[1].split(":")[1];
 
-            int dept = 1;
-            for (int a = 0; a < categoryDept.length(); a++) {
-                if (categoryDept.charAt(a) == ',') dept++;
-            }
+                int dept = 1;
+                for (int a = 0; a < categoryDept.length(); a++) {
+                    if (categoryDept.charAt(a) == ',') dept++;
+                }
 
-            int categoryCount = wnsearch.getCategoryCount(collections[idx], categoryField, dept);
+                int categoryCount = wnsearch.getCategoryCount(collections[idx], categoryField, dept);
 
-            //컬렉션 별 카테고리 리스트 저장
-            for (int a = 0; a < categoryCount; a++) {
-                String categoryName = wnsearch.getCategoryName(collections[idx], categoryField, dept, a);
-                int categoryCnt = wnsearch.getDocumentCountInCategory(collections[idx], categoryField, dept, a);
-                categoryListMap.put(categoryName, categoryCnt);
+                //컬렉션 별 카테고리 리스트 저장
+                for (int a = 0; a < categoryCount; a++) {
+                    String categoryName = wnsearch.getCategoryName(collections[idx], categoryField, dept, a);
+                    int categoryCnt = wnsearch.getDocumentCountInCategory(collections[idx], categoryField, dept, a);
+                    categoryListMap.put(categoryName, categoryCnt);
+                }
             }
         }
 
