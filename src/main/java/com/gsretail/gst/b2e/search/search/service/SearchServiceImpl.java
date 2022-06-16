@@ -33,7 +33,7 @@ public class SearchServiceImpl implements SearchService {
     //오타검색을 위한 전체 검색 결과 카운트
     int allTotalCount = 0;
     //디버깅 보기 설정
-    boolean isDebug = true;
+    boolean isDebug = false;
 
     /**
      * 통합검색
@@ -50,7 +50,7 @@ public class SearchServiceImpl implements SearchService {
         WNCollection wncol = new WNCollection();
         String collection = search.getCollection();
         String[] searchFields = null;
-        String[] collections = null;
+        String[] collections;
 
         if (collection.equals("ALL")) { //통합검색인 경우
             collections = wncol.COLLECTIONS;
@@ -121,7 +121,7 @@ public class SearchServiceImpl implements SearchService {
         WNCollection wncol = new WNCollection();
         String collection = search.getCollection();
         String[] searchFields = null;
-        String[] collections = null;
+        String[] collections;
 
         if (collection.equals("ALL")) { //통합검색인 경우
             collections = wncol.COLLECTIONS;
@@ -490,7 +490,7 @@ public class SearchServiceImpl implements SearchService {
         WNCollection wncol = new WNCollection();
         String collection = search.getCollection();
         String[] searchFields = null;
-        String[] collections = null;
+        String[] collections;
 
         if (collection.equals("ALL")) { //통합검색인 경우
             collections = wncol.COLLECTIONS;
@@ -501,9 +501,8 @@ public class SearchServiceImpl implements SearchService {
 
         WNSearch wnsearch = new WNSearch(isDebug, false, collections, mergeCollections , searchFields);
 
+        //Collection 설정
         for(int i = 0 ; i < collections.length ; i++) {
-
-            wnsearch.setCollectionInfoValue(collections[i], PAGE_INFO, search.getStartCount() + "," + search.getListCount());
             //검색어가 없으면 DATE_RANGE 로 전체 데이터 출력
             if (!"".equals(search.getQuery())) {
                 wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
@@ -512,42 +511,54 @@ public class SearchServiceImpl implements SearchService {
                 wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort());
             }
 
-            //searchField 값이 있으면 설정, 없으면 기본검색필드
-            if (!"".equals(search.getSearchField()) && search.getSearchField().indexOf("ALL") == -1) {
-                wnsearch.setCollectionInfoValue(collections[i], SEARCH_FIELD, search.getSearchField());
-            }
+            wnsearch.setCollectionInfoValue(collections[i], SEARCH_FIELD, "itemName,shortItemName");
 
             wnsearch.setCollectionInfoValue(collections[i],CATEGORY_GROUPBY , "");
 
-            wnsearch.setCollectionInfoValue(collections[i],GROUP_BY , "supermarketItemCode");
+            wnsearch.setCollectionInfoValue(collections[i],GROUP_BY , "supermarketItemCode,1");
             wnsearch.setCollectionInfoValue(collections[i],GROUP_SORT_FIELD , search.getSort() + ",exposureSeq/DESC");
         }
 
+        //MergeCollection 설정
+        for(int i = 0 ; i < mergeCollections.length ; i ++){
+            wnsearch.setMergeCollectionInfoValue(mergeCollections[i] , MERGE_PAGE_INFO , search.getStartCount() + "," + search.getListCount());
+        }
 
         //검색 수행
         wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery , true);
 
-        System.out.println(wnsearch.getResultCount(mergeCollections[0]));
-        System.out.println(wnsearch.getResultTotalCount(mergeCollections[0]));
 
-        int result = wnsearch.getResultCount(mergeCollections[0]);
+        //검색 결과 생성
+        Map<String , Object> searchResultMap = new HashMap<>();
+        searchResultMap.put("Query", search.getQuery());
+        searchResultMap.put("Version", "5.3.0");
 
-        for(int i = 0 ; i < result ; i ++){
-            System.out.println(wnsearch.getField(mergeCollections[0], "itemName" , i , false));
-            System.out.println(wnsearch.getField(mergeCollections[0], "supermarketItemCode" , i , false));
-            System.out.println(wnsearch.getField(mergeCollections[0], "ALIAS" , i , false));
-
-//            System.out.println(wnsearch.getFieldInGroup(mergeCollections[0], "itemName" , i , 0));
-//            System.out.println(wnsearch.getFieldInGroup(mergeCollections[0], "supermarketItemCode" , i , 0));
-//            System.out.println(wnsearch.getFieldInGroup(mergeCollections[0], "Alias" , i , 0));
+        for(int i = 0 ; i < mergeCollections.length ; i++){
+            Map<String , Object> collectionMap = new HashMap<>();
+            int searchResultCount = wnsearch.getResultGroupCount(mergeCollections[i]);
+            int searchResultTotalCount = wnsearch.getResultTotalGroupCount(mergeCollections[i]);
+            int mergeCollectionidx = wnsearch.getMergeCollIdx(mergeCollections[i]);
+            String[] documentField = wncol.MERGE_COLLECTION_INFO[mergeCollectionidx][MERGE_RESULT_FIELD].split(",");
 
 
+            List<Map<String , String>> resultFieldList = new ArrayList<>();
+
+            for(int j = 0 ; j < searchResultCount ; j++){
+                Map<String , String> field = new HashMap<>();
+                for(int a = 0 ; a < documentField.length ; a++){
+                    String documentFieldName = documentField[a];
+                    field.put(documentFieldName ,wnsearch.getFieldInGroup(mergeCollections[i], documentFieldName , j , 0));
+                }
+                resultFieldList.add(field);
+            }
+            collectionMap.put("Document" , resultFieldList);
+            collectionMap.put("ResultCount" , searchResultCount);
+            collectionMap.put("TotalCount" , searchResultTotalCount);
+            searchResultMap.put("DocumentSet" , collectionMap);
         }
 
-
-
-
         JSONObject searchResult = new JSONObject();
+        searchResult.put("SearchQueryResult", searchResultMap);
 
         // 디버그 메시지 출력
         String debugMsg = wnsearch.printDebug() != null ? wnsearch.printDebug().trim() : "";
@@ -555,8 +566,7 @@ public class SearchServiceImpl implements SearchService {
             System.out.println(debugMsg.replace("<br>", "\n"));
         }
 
-        return null;
-
+        return searchResult;
     }
 
 }
