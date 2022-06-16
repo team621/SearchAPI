@@ -243,7 +243,16 @@ public class SearchServiceImpl implements SearchService {
             //categoryquery 설정
             if(!collections[i].startsWith("category")) {
                 if (!"".equals(search.getCategoryId())) {
-                    wnsearch.setCollectionInfoValue(collections[i], CATEGORY_QUERY, "categoryId|" + search.getCategoryId());
+                    String[] categoryId = search.getCategoryId().split(",");
+                    String categoryQuery = "";
+                    for(int c = 0 ; c < categoryId.length ; c++){
+                        if(c + 1 == categoryId.length){
+                            categoryQuery += "categoryId|" + categoryId[c];
+                        }else{
+                            categoryQuery += "categoryId|" + categoryId[c] + ",";
+                        }
+                    }
+                    wnsearch.setCollectionInfoValue(collections[i], CATEGORY_QUERY, categoryQuery);
                 }
             }
 
@@ -284,6 +293,7 @@ public class SearchServiceImpl implements SearchService {
                 JSONObject documentset = new JSONObject();
                 int resultCount = 0;
                 int totalCount = 0;
+
 
                 //supermarketItemCode로 그룹화 하는 컬렉션 선별하여 검색 결과 count 생성
                 if (collections[idx].equals("oneplus") || collections[idx].equals("상품권") || collections[idx].equals("매장") || collections[idx].equals("아동급식")) {
@@ -471,5 +481,83 @@ public class SearchServiceImpl implements SearchService {
 
         return exquery;
     }
+
+
+    public JSONObject searchTest(Search search) {
+        //오타 후 추천 검색어 화면 출력 여부 체크
+        boolean useSuggestedQuery = true;
+
+        WNCollection wncol = new WNCollection();
+        String collection = search.getCollection();
+        String[] searchFields = null;
+        String[] collections = null;
+
+        if (collection.equals("ALL")) { //통합검색인 경우
+            collections = wncol.COLLECTIONS;
+        } else {                        //개별 또는 다중 검색인 경우
+            collections = collection.split(",");
+        }
+        String[] mergeCollections = wncol.MERGE_COLLECTIONS;
+
+        WNSearch wnsearch = new WNSearch(isDebug, false, collections, mergeCollections , searchFields);
+
+        for(int i = 0 ; i < collections.length ; i++) {
+
+            wnsearch.setCollectionInfoValue(collections[i], PAGE_INFO, search.getStartCount() + "," + search.getListCount());
+            //검색어가 없으면 DATE_RANGE 로 전체 데이터 출력
+            if (!"".equals(search.getQuery())) {
+                wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
+            } else {
+                wnsearch.setCollectionInfoValue(collections[i], DATE_RANGE, search.getStartDate().replaceAll("[.]", "/") + ",2030/01/01,-");
+                wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort());
+            }
+
+            //searchField 값이 있으면 설정, 없으면 기본검색필드
+            if (!"".equals(search.getSearchField()) && search.getSearchField().indexOf("ALL") == -1) {
+                wnsearch.setCollectionInfoValue(collections[i], SEARCH_FIELD, search.getSearchField());
+            }
+
+            wnsearch.setCollectionInfoValue(collections[i],CATEGORY_GROUPBY , "");
+
+            wnsearch.setCollectionInfoValue(collections[i],GROUP_BY , "supermarketItemCode");
+            wnsearch.setCollectionInfoValue(collections[i],GROUP_SORT_FIELD , search.getSort() + ",exposureSeq/DESC");
+        }
+
+
+        //검색 수행
+        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery , true);
+
+        System.out.println(wnsearch.getResultCount(mergeCollections[0]));
+        System.out.println(wnsearch.getResultTotalCount(mergeCollections[0]));
+
+        int result = wnsearch.getResultCount(mergeCollections[0]);
+
+        for(int i = 0 ; i < result ; i ++){
+            System.out.println(wnsearch.getField(mergeCollections[0], "itemName" , i , false));
+            System.out.println(wnsearch.getField(mergeCollections[0], "supermarketItemCode" , i , false));
+            System.out.println(wnsearch.getField(mergeCollections[0], "ALIAS" , i , false));
+
+//            System.out.println(wnsearch.getFieldInGroup(mergeCollections[0], "itemName" , i , 0));
+//            System.out.println(wnsearch.getFieldInGroup(mergeCollections[0], "supermarketItemCode" , i , 0));
+//            System.out.println(wnsearch.getFieldInGroup(mergeCollections[0], "Alias" , i , 0));
+
+
+        }
+
+
+
+
+        JSONObject searchResult = new JSONObject();
+
+        // 디버그 메시지 출력
+        String debugMsg = wnsearch.printDebug() != null ? wnsearch.printDebug().trim() : "";
+        if (isDebug) {
+            System.out.println(debugMsg.replace("<br>", "\n"));
+        }
+
+        return null;
+
+    }
+
 }
 

@@ -1,5 +1,7 @@
 package com.gsretail.gst.b2e.search.search.common;
 
+import org.springframework.util.RouteMatcher;
+
 import static com.gsretail.gst.b2e.search.search.common.WNCollection.SEARCH_IP;
 import static com.gsretail.gst.b2e.search.search.common.WNCollection.SEARCH_PORT;
 import static com.gsretail.gst.b2e.search.search.common.WNDefine.*;
@@ -1348,6 +1350,7 @@ public class WNSearch {
         String[] collectionNames = split(wncol.MERGE_COLLECTION_INFO[idx][MERGE_MAPPING_COLLECTION_NAME], "/");
 
         int collectionLength = collectionNames.length;
+
         for(int i=0; i < collectionLength; i++) {
             int chk = checkValidCollection("[setMergeCollectionBasicnfo]", collectionNames[i]);
             if(chk == -1){
@@ -1356,6 +1359,7 @@ public class WNSearch {
         }
 
         String[] mergeFields = split(wncol.MERGE_COLLECTION_INFO[idx][MERGE_RESULT_FIELD], ",");
+
         int mergeFieldLength = mergeFields.length;
 
         String[][] documentFields = new String[collectionLength][mergeFieldLength];
@@ -1385,9 +1389,12 @@ public class WNSearch {
     public int addMergeMultiGroupBy(int idx) {
         int ret = 0;
         if (!wncol.MERGE_COLLECTION_INFO[idx][MERGE_MULTI_GROUP_BY_FIELD].equals("")) {
+            //mergeCollection
             String mergeCollectionName = wncol.MERGE_COLLECTION_INFO[idx][MERGE_COLLECTION_NAME];
+            //thefresh/woodel_gs
             String[] collectionNames = split(wncol.MERGE_COLLECTION_INFO[idx][MERGE_MAPPING_COLLECTION_NAME], "/");
 
+            //2
             int collectionLength = collectionNames.length;
             for(int i=0; i < collectionLength; i++) {
                 int chk = checkValidCollection("[addMergeMultiGroupBy]", collectionNames[i]);
@@ -1395,11 +1402,13 @@ public class WNSearch {
                     return -1;
                 }
             }
-
+            //supermarketItemCode
             String[] mergeMultiGroupByFields = split(wncol.MERGE_COLLECTION_INFO[idx][MERGE_MULTI_GROUP_BY_FIELD], ",");
+            //1
             int mergeLength = mergeMultiGroupByFields.length;
 
             String[][] documentFields = new String[collectionLength][mergeLength];
+            //supermarketItemCode/supermarketItemCode
             String[] temp = split(wncol.MERGE_COLLECTION_INFO[idx][MERGE_MAPPING_MULTI_GROUP_BY_FIELD], "/");
 
             for(int k=0; k < collectionLength; k++) {

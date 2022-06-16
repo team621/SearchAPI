@@ -16,15 +16,29 @@ import static java.lang.System.getProperties;
  * 2022-06-07        USER       최초 생성
  */
 public class WNCollection {
-    static String SEARCH_IP="27.122.138.23";
-    static int SEARCH_PORT=5052;
+    static String SEARCH_IP = "27.122.138.23";
+    static int SEARCH_PORT = 5052;
     //운영
-    public String[] COLLECTIONS = new String[]{"oneplus","category_oneplus","thefresh","category_thefresh","woodel_gs","category_woodel_gs"};
-    public String[] COLLECTIONS_NAME = new String[]{"oneplus","thefresh","woodel_gs"};
+    public String[] COLLECTIONS = new String[]{"oneplus", "category_oneplus", "thefresh", "category_thefresh", "woodel_gs", "category_woodel_gs"};
+    public String[] COLLECTIONS_NAME = new String[]{"oneplus", "thefresh", "woodel_gs"};
 
-    public String[] MERGE_COLLECTIONS = new String[]{""};
+    public String[] MERGE_COLLECTIONS = new String[]{"mergeCollection"};
 
-    public String[][] MERGE_COLLECTION_INFO = null;
+    public String[][] MERGE_COLLECTION_INFO = new String[][]
+            {
+                    {
+                            "mergeCollection", // set merge collection name
+                            "thefresh/woodel_gs", // set collection name, delimiter: /
+                            "0,10",  // set merge collection pageinfo (start,count)
+                            "itemName,storeName,supermarketItemCode,ALIAS",// set merge document field
+                            "itemName,storeName,supermarketItemCode,ALIAS/itemName,storeName,supermarketItemCode,ALIAS", // set document field, delimiter: /
+                            "supermarketItemCode", // set merge collection multi-group-by field
+                            "supermarketItemCode/supermarketItemCode", // set merge collection multi-group-by field, delimiter: /
+                            "", // set merge collection category-group-by field
+                            ""  // set collection multi-group-by field, delimiter: /
+                    }
+            };
+
 
     public String[][] COLLECTION_INFO = new String[][]{
             {

@@ -641,9 +641,7 @@ public class WNCommon {
         int ret = -1;
         int length = categoryQuery.length;
         for(int i=0; i < length; i++) {
-            System.out.println("test" + categoryQuery[i]);
             String[] dataFields = WNUtils.split(categoryQuery[i], "|");
-
             if(dataFields.length == 2){
                 ret = search.w3AddCategoryQuery(collectionName, dataFields[0], dataFields[1]);
             }

@@ -28,4 +28,6 @@ public interface SearchService {
 
     public JSONObject getTotalSearch(Search search);
     public JSONObject getDeliveryStoreSearch(Search search);
+
+    public JSONObject searchTest(Search search);
 }
