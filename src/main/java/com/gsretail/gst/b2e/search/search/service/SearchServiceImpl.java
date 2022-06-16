@@ -33,7 +33,7 @@ public class SearchServiceImpl implements SearchService {
     //오타검색을 위한 전체 검색 결과 카운트
     int allTotalCount = 0;
     //디버깅 보기 설정
-    boolean isDebug = true;
+    boolean isDebug = false;
 
     /**
      * 통합검색
@@ -251,7 +251,7 @@ public class SearchServiceImpl implements SearchService {
 
             //통합검색시 supermarketItemCode(상품 고유 번호) 이용하여 그룹화
             if (flag.equals("totalSearch")) {
-                if (collections[i].equals("thefresh") || collections[i].equals("woodel_gs")) {
+                if (collections[i].equals("thefresh") || collections[i].equals("woodel_gs") || collections[i].equals("woodel_mart")) {
                     wnsearch.setCollectionInfoValue(collections[i], GROUP_BY, "supermarketItemCode,1");
                     wnsearch.setCollectionInfoValue(collections[i], GROUP_SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
                 }
