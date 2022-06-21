@@ -56,7 +56,7 @@ public class SearchController {
     }
 
     @RequestMapping(value = "/search/v1/chatbotSearch", method = {RequestMethod.POST, RequestMethod.GET})
-    public JSONObject getSearchTest(HttpServletRequest request){
+    public JSONObject getChatbotSearchResult(HttpServletRequest request){
         Search search = setSearchParameter(request);
 
         JSONObject searchResultJson = searchService.chatbotSearch(search);
