@@ -115,9 +115,6 @@ public class SearchServiceImpl implements SearchService {
      * @return
      */
     public JSONObject getDeliveryStoreSearch(Search search) {
-        //오타 후 추천 검색어 화면 출력 여부 체크
-        boolean useSuggestedQuery = false;
-
         WNCollection wncol = new WNCollection();
         String collection = search.getCollection();
         String[] searchFields = null;
@@ -135,7 +132,7 @@ public class SearchServiceImpl implements SearchService {
         setCollectionInfo(wnsearch, collections, search, "storeSearch");
 
         //1. 조건에 맞는 매장 코드 검색 수행 (queryLog 출력안함)
-        wnsearch.search(search.getQuery(), false, CONNECTION_REUSE, useSuggestedQuery , false);
+        wnsearch.search(search.getQuery(), false, CONNECTION_REUSE, false , false);
 
         //1번 검색 수행 결과 이용한 상품출력할 매장 코드 생성
         String storeCode = "";
@@ -160,13 +157,104 @@ public class SearchServiceImpl implements SearchService {
         setCollectionInfo(wnsearch, collections, search, "totalSearch");
 
         //통합검색 수행
-        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery , true);
+        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, false , true);
 
         //결과값 생성
         Map<String , Object> totalSearchResultMap = getSearchResult(wnsearch, wncol, collections, search);
 
         JSONObject searchResult = new JSONObject();
         searchResult.put("SearchQueryResult", totalSearchResultMap);
+
+        // 디버그 메시지 출력
+        String debugMsg = wnsearch.printDebug() != null ? wnsearch.printDebug().trim() : "";
+        if (isDebug) {
+            System.out.println(debugMsg.replace("<br>", "\n"));
+        }
+
+        return searchResult;
+    }
+
+    /**
+     * 챗봇 검색
+     *
+     * @param search
+     * @return
+     */
+    public JSONObject chatbotSearch(Search search) {
+        WNCollection wncol = new WNCollection();
+        String collection = search.getCollection();
+        String[] searchFields = null;
+        String[] collections;
+
+        if (collection.equals("ALL")) { //통합검색인 경우
+            collections = wncol.COLLECTIONS;
+        } else {                        //개별 또는 다중 검색인 경우
+            collections = collection.split(",");
+        }
+
+        String[] mergeCollections = wncol.MERGE_COLLECTIONS;
+
+        WNSearch wnsearch = new WNSearch(isDebug, false, collections, mergeCollections , searchFields);
+
+        //Collection 설정
+        for(int i = 0 ; i < collections.length ; i++) {
+            //검색어가 없으면 DATE_RANGE 로 전체 데이터 출력
+            if (!"".equals(search.getQuery())) {
+                wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
+            } else {
+                wnsearch.setCollectionInfoValue(collections[i], DATE_RANGE, search.getStartDate().replaceAll("[.]", "/") + ",2030/01/01,-");
+                wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort());
+            }
+
+            wnsearch.setCollectionInfoValue(collections[i], SEARCH_FIELD, "itemName,shortItemName");
+
+            wnsearch.setCollectionInfoValue(collections[i],CATEGORY_GROUPBY , "");
+
+            wnsearch.setCollectionInfoValue(collections[i],GROUP_BY , "supermarketItemCode,1");
+            wnsearch.setCollectionInfoValue(collections[i],GROUP_SORT_FIELD , search.getSort() + ",exposureSeq/DESC");
+        }
+
+        //MergeCollection 설정
+        for(int i = 0 ; i < mergeCollections.length ; i ++){
+            wnsearch.setMergeCollectionInfoValue(mergeCollections[i] , MERGE_PAGE_INFO , search.getStartCount() + "," + search.getListCount());
+        }
+
+        //검색 수행
+        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, false , true);
+
+
+        //검색 결과 생성
+        Map<String , Object> searchResultMap = new HashMap<>();
+        searchResultMap.put("Query", search.getQuery());
+        searchResultMap.put("Version", "5.3.0");
+
+        for(int i = 0 ; i < mergeCollections.length ; i++){
+            Map<String , Object> collectionMap = new HashMap<>();
+            int searchResultCount = wnsearch.getResultGroupCount(mergeCollections[i]);
+            int searchResultTotalCount = wnsearch.getResultTotalGroupCount(mergeCollections[i]);
+            int mergeCollectionidx = wnsearch.getMergeCollIdx(mergeCollections[i]);
+            String[] documentField = wncol.MERGE_COLLECTION_INFO[mergeCollectionidx][MERGE_RESULT_FIELD].split(",");
+
+
+            List<Map<String , String>> resultFieldList = new ArrayList<>();
+
+            for(int j = 0 ; j < searchResultCount ; j++){
+                Map<String , String> field = new HashMap<>();
+                for(int a = 0 ; a < documentField.length ; a++){
+                    String documentFieldName = documentField[a];
+                    field.put(documentFieldName ,wnsearch.getFieldInGroup(mergeCollections[i], documentFieldName , j , 0));
+                }
+                field.put("RANK" , Integer.toString(j + 1));
+                resultFieldList.add(field);
+            }
+            collectionMap.put("Document" , resultFieldList);
+            collectionMap.put("ResultCount" , searchResultCount);
+            collectionMap.put("TotalCount" , searchResultTotalCount);
+            searchResultMap.put("DocumentSet" , collectionMap);
+        }
+
+        JSONObject searchResult = new JSONObject();
+        searchResult.put("SearchQueryResult", searchResultMap);
 
         // 디버그 메시지 출력
         String debugMsg = wnsearch.printDebug() != null ? wnsearch.printDebug().trim() : "";
@@ -235,8 +323,6 @@ public class SearchServiceImpl implements SearchService {
                 wnsearch.setCollectionInfoValue(collections[i], EXQUERY_FIELD, exquery);
             }
 
-            System.out.println(exquery);
-
             //filterquery 설정
             wnsearch.setCollectionInfoValue(collections[i], FILTER_OPERATION, "<sellPrice:gt:" + search.getMinSellPrice() + "> <sellPrice:lt:" + search.getMaxSellPrice() + ">");
 
@@ -258,7 +344,7 @@ public class SearchServiceImpl implements SearchService {
 
             //통합검색시 supermarketItemCode(상품 고유 번호) 이용하여 그룹화
             if (flag.equals("totalSearch")) {
-                if (collections[i].equals("thefresh") || collections[i].equals("woodel_gs")) {
+                if (collections[i].equals("thefresh") || collections[i].equals("woodel_gs") || collections[i].equals("woodel_mart")) {
                     wnsearch.setCollectionInfoValue(collections[i], GROUP_BY, "supermarketItemCode,1");
                     wnsearch.setCollectionInfoValue(collections[i], GROUP_SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
                 }
@@ -296,7 +382,7 @@ public class SearchServiceImpl implements SearchService {
 
 
                 //supermarketItemCode로 그룹화 하는 컬렉션 선별하여 검색 결과 count 생성
-                if (collections[idx].equals("oneplus") || collections[idx].equals("상품권") || collections[idx].equals("매장") || collections[idx].equals("아동급식")) {
+                if (collections[idx].equals("oneplus") || collections[idx].equals("gs25_reservation") || collections[idx].equals("wine25_gs") || collections[idx].equals("아동급식")) {
                     resultCount = wnsearch.getResultCount(collections[idx]);
                     totalCount = wnsearch.getResultTotalCount(collections[idx]);
                 } else {
@@ -481,93 +567,5 @@ public class SearchServiceImpl implements SearchService {
 
         return exquery;
     }
-
-
-    public JSONObject searchTest(Search search) {
-        //오타 후 추천 검색어 화면 출력 여부 체크
-        boolean useSuggestedQuery = true;
-
-        WNCollection wncol = new WNCollection();
-        String collection = search.getCollection();
-        String[] searchFields = null;
-        String[] collections;
-
-        if (collection.equals("ALL")) { //통합검색인 경우
-            collections = wncol.COLLECTIONS;
-        } else {                        //개별 또는 다중 검색인 경우
-            collections = collection.split(",");
-        }
-        String[] mergeCollections = wncol.MERGE_COLLECTIONS;
-
-        WNSearch wnsearch = new WNSearch(isDebug, false, collections, mergeCollections , searchFields);
-
-        //Collection 설정
-        for(int i = 0 ; i < collections.length ; i++) {
-            //검색어가 없으면 DATE_RANGE 로 전체 데이터 출력
-            if (!"".equals(search.getQuery())) {
-                wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
-            } else {
-                wnsearch.setCollectionInfoValue(collections[i], DATE_RANGE, search.getStartDate().replaceAll("[.]", "/") + ",2030/01/01,-");
-                wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort());
-            }
-
-            wnsearch.setCollectionInfoValue(collections[i], SEARCH_FIELD, "itemName,shortItemName");
-
-            wnsearch.setCollectionInfoValue(collections[i],CATEGORY_GROUPBY , "");
-
-            wnsearch.setCollectionInfoValue(collections[i],GROUP_BY , "supermarketItemCode,1");
-            wnsearch.setCollectionInfoValue(collections[i],GROUP_SORT_FIELD , search.getSort() + ",exposureSeq/DESC");
-        }
-
-        //MergeCollection 설정
-        for(int i = 0 ; i < mergeCollections.length ; i ++){
-            wnsearch.setMergeCollectionInfoValue(mergeCollections[i] , MERGE_PAGE_INFO , search.getStartCount() + "," + search.getListCount());
-        }
-
-        //검색 수행
-        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery , true);
-
-
-        //검색 결과 생성
-        Map<String , Object> searchResultMap = new HashMap<>();
-        searchResultMap.put("Query", search.getQuery());
-        searchResultMap.put("Version", "5.3.0");
-
-        for(int i = 0 ; i < mergeCollections.length ; i++){
-            Map<String , Object> collectionMap = new HashMap<>();
-            int searchResultCount = wnsearch.getResultGroupCount(mergeCollections[i]);
-            int searchResultTotalCount = wnsearch.getResultTotalGroupCount(mergeCollections[i]);
-            int mergeCollectionidx = wnsearch.getMergeCollIdx(mergeCollections[i]);
-            String[] documentField = wncol.MERGE_COLLECTION_INFO[mergeCollectionidx][MERGE_RESULT_FIELD].split(",");
-
-
-            List<Map<String , String>> resultFieldList = new ArrayList<>();
-
-            for(int j = 0 ; j < searchResultCount ; j++){
-                Map<String , String> field = new HashMap<>();
-                for(int a = 0 ; a < documentField.length ; a++){
-                    String documentFieldName = documentField[a];
-                    field.put(documentFieldName ,wnsearch.getFieldInGroup(mergeCollections[i], documentFieldName , j , 0));
-                }
-                resultFieldList.add(field);
-            }
-            collectionMap.put("Document" , resultFieldList);
-            collectionMap.put("ResultCount" , searchResultCount);
-            collectionMap.put("TotalCount" , searchResultTotalCount);
-            searchResultMap.put("DocumentSet" , collectionMap);
-        }
-
-        JSONObject searchResult = new JSONObject();
-        searchResult.put("SearchQueryResult", searchResultMap);
-
-        // 디버그 메시지 출력
-        String debugMsg = wnsearch.printDebug() != null ? wnsearch.printDebug().trim() : "";
-        if (isDebug) {
-            System.out.println(debugMsg.replace("<br>", "\n"));
-        }
-
-        return searchResult;
-    }
-
 }
 

@@ -19,8 +19,8 @@ public class WNCollection {
     static String SEARCH_IP = "27.122.138.23";
     static int SEARCH_PORT = 5052;
     //운영
-    public String[] COLLECTIONS = new String[]{"oneplus", "category_oneplus", "thefresh", "category_thefresh", "woodel_gs", "category_woodel_gs" , "woodel_mart"};
-    public String[] COLLECTIONS_NAME = new String[]{"oneplus", "thefresh", "woodel_gs" , "woodel_mart"};
+    public String[] COLLECTIONS = new String[]{"oneplus", "category_oneplus", "thefresh", "category_thefresh", "woodel_gs", "category_woodel_gs" , "woodel_mart" , "category_woodel_mart" , "gs25_reservation" , "category_gs25_reservation" , "wine25_gs" , "category_wine25_gs" };
+    public String[] COLLECTIONS_NAME = new String[]{"oneplus", "thefresh", "woodel_gs" , "woodel_mart" , "gs25_reservation"};
 
     public String[] MERGE_COLLECTIONS = new String[]{"mergeCollection"};
 
@@ -219,7 +219,7 @@ public class WNCollection {
                     "woodel_mart", // set index name
                     "woodel_mart", // set collection name
                     "0,3", // set pageinfo (start,count)
-                    "1,0,0,0,0", // set query analyzer (useKMA,isCase,useOriginal,useSynonym, duplcated detection)
+                    "1,1,1,1,0", // set query analyzer (useKMA,isCase,useOriginal,useSynonym, duplcated detection)
                     "RANK/DESC,DATE/DESC", // set sort field (field,order) multi sort '/'
                     "basic,rpfmo,100", // set sort field (field,order) multi sort '/'
                     "itemName,shortItemName,storeName",// set search field
@@ -233,7 +233,7 @@ public class WNCollection {
                     "", // set groupby field(field, count)
                     "", // set sort field group(field/order,field/order,...)
                     "", // set categoryBoost(fieldname,matchType,boostID,boostKeyword)
-                    "", // set categoryGroupBy (fieldname:value)
+                    "categoryId:1/SC|categoryName:1/SC", // set categoryGroupBy (fieldname:value)
                     "", // set categoryQuery (fieldname:value)
                     "", // set property group (fieldname,min,max, groupcount)
                     "serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,cardDiscountName,cardDiscountYn,adultYn,soldOutSp,deliverySp,stockCheckYn,recommendItemYn,storeCode,prmByQty,prmGtQty,wdlvyItemSpCd,optItemIncldYn,supermarketItemCode,evntKindCd", // use check prefix query filed
@@ -243,6 +243,150 @@ public class WNCollection {
                     "", // set Duplicate Detection Criterion Field, RANK/DESC,DATE/DESC
                     "woodel_mart" // collection display name
             }
-
+            ,
+            {
+                    "category_woodel_mart", // set index name
+                    "woodel_mart", // set collection name
+                    "0,3", // set pageinfo (start,count)
+                    "1,1,1,1,0", // set query analyzer (useKMA,isCase,useOriginal,useSynonym, duplcated detection)
+                    "RANK/DESC,DATE/DESC", // set sort field (field,order) multi sort '/'
+                    "basic,rpfmo,100", // set sort field (field,order) multi sort '/'
+                    "itemName,shortItemName,storeName",// set search field
+                    "DOCID,itemImageUrl,serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,itemName,shortItemName,sellPrice,discountPrice,discountRate,discountAmount,cardDiscountName,cardDiscountYn,extraPresentItemName,extraPresentItemShortName,extraPresentImageUrl,adultYn,pickupDate,stockCount,buyQuantity,soldOutSp,deliverySp,starPoint,prmByQty,prmGtQty,stockCheckYn,exposureSeq,categoryId,categoryName,recommendItemYn,storeName,storeCode,pickupStartDate,pickupEndDate,wdlvyItemSpCd,optItemIncldYn,supermarketItemCode,evntKindCd,ALIAS",// set document field
+                    "", // set date range
+                    "", // set rank range
+                    "", // set prefix query, example: <fieldname:contains:value1>|<fieldname:contains:value2>/1, (fieldname:contains:value) and ' ', or '|', not '!' / operator (AND:1, OR:0)
+                    "", // set collection query (<fieldname:contains:value^weight | value^weight>/option...) and ' ', or '|'
+                    "", // set boost query (<fieldname:contains:value> | <field3:contains:value>...) and ' ', or '|'
+                    "", // set filter operation (<fieldname:operator:value>)
+                    "", // set groupby field(field, count)
+                    "", // set sort field group(field/order,field/order,...)
+                    "", // set categoryBoost(fieldname,matchType,boostID,boostKeyword)
+                    "categoryId:1/SC|categoryName:1/SC", // set categoryGroupBy (fieldname:value)
+                    "", // set categoryQuery (fieldname:value)
+                    "", // set property group (fieldname,min,max, groupcount)
+                    "serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,cardDiscountName,cardDiscountYn,adultYn,soldOutSp,deliverySp,stockCheckYn,recommendItemYn,storeCode,prmByQty,prmGtQty,wdlvyItemSpCd,optItemIncldYn,supermarketItemCode,evntKindCd", // use check prefix query filed
+                    "itemCode,sellPrice,discountPrice,discountRate,pickupDate,stockCount,starPoint,exposureSeq,storeCode,pickupStartDate,pickupEndDate,supermarketItemCode", // set use check fast access field
+                    "", // set multigroupby field
+                    "", // set auth query (Auth Target Field, Auth Collection, Auth Reference Field, Authority Query)
+                    "", // set Duplicate Detection Criterion Field, RANK/DESC,DATE/DESC
+                    "woodel_mart" // collection display name
+            }
+            ,
+            {
+                    "gs25_reservation", // set index name
+                    "gs25_reservation", // set collection name
+                    "0,3", // set pageinfo (start,count)
+                    "1,1,1,1,0", // set query analyzer (useKMA,isCase,useOriginal,useSynonym, duplcated detection)
+                    "RANK/DESC,DATE/DESC", // set sort field (field,order) multi sort '/'
+                    "basic,rpfmo,100", // set sort field (field,order) multi sort '/'
+                    "itemName,shortItemName,storeName",// set search field
+                    "DOCID,itemImageUrl,serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,itemName,shortItemName,sellPrice,discountPrice,discountRate,discountAmount,cardDiscountName,cardDiscountYn,extraPresentItemName,extraPresentItemShortName,extraPresentImageUrl,adultYn,pickupDate,stockCount,buyQuantity,soldOutSp,deliverySp,starPoint,prmByQty,prmGtQty,stockCheckYn,exposureSeq,categoryId,categoryName,recommendItemYn,storeName,storeCode,pickupStartDate,pickupEndDate,wdlvyItemSpCd,optItemIncldYn,supermarketItemCode,ALIAS",// set document field
+                    "", // set date range
+                    "", // set rank range
+                    "", // set prefix query, example: <fieldname:contains:value1>|<fieldname:contains:value2>/1, (fieldname:contains:value) and ' ', or '|', not '!' / operator (AND:1, OR:0)
+                    "", // set collection query (<fieldname:contains:value^weight | value^weight>/option...) and ' ', or '|'
+                    "", // set boost query (<fieldname:contains:value> | <field3:contains:value>...) and ' ', or '|'
+                    "", // set filter operation (<fieldname:operator:value>)
+                    "", // set groupby field(field, count)
+                    "", // set sort field group(field/order,field/order,...)
+                    "", // set categoryBoost(fieldname,matchType,boostID,boostKeyword)
+                    "categoryId:1/SC|categoryName:1/SC", // set categoryGroupBy (fieldname:value)
+                    "", // set categoryQuery (fieldname:value)
+                    "", // set property group (fieldname,min,max, groupcount)
+                    "serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,cardDiscountName,cardDiscountYn,adultYn,soldOutSp,deliverySp,stockCheckYn,recommendItemYn,storeCode,prmByQty,prmGtQty,wdlvyItemSpCd,optItemIncldYn,supermarketItemCode", // use check prefix query filed
+                    "itemCode,sellPrice,discountPrice,discountRate,pickupDate,stockCount,starPoint,exposureSeq,storeCode,pickupStartDate,pickupEndDate,supermarketItemCode", // set use check fast access field
+                    "", // set multigroupby field
+                    "", // set auth query (Auth Target Field, Auth Collection, Auth Reference Field, Authority Query)
+                    "", // set Duplicate Detection Criterion Field, RANK/DESC,DATE/DESC
+                    "gs25_reservation" // collection display name
+            }
+            ,
+            {
+                    "category_gs25_reservation", // set index name
+                    "gs25_reservation", // set collection name
+                    "0,3", // set pageinfo (start,count)
+                    "1,1,1,1,0", // set query analyzer (useKMA,isCase,useOriginal,useSynonym, duplcated detection)
+                    "RANK/DESC,DATE/DESC", // set sort field (field,order) multi sort '/'
+                    "basic,rpfmo,100", // set sort field (field,order) multi sort '/'
+                    "itemName,shortItemName,storeName",// set search field
+                    "DOCID,itemImageUrl,serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,itemName,shortItemName,sellPrice,discountPrice,discountRate,discountAmount,cardDiscountName,cardDiscountYn,extraPresentItemName,extraPresentItemShortName,extraPresentImageUrl,adultYn,pickupDate,stockCount,buyQuantity,soldOutSp,deliverySp,starPoint,prmByQty,prmGtQty,stockCheckYn,exposureSeq,categoryId,categoryName,recommendItemYn,storeName,storeCode,pickupStartDate,pickupEndDate,wdlvyItemSpCd,optItemIncldYn,supermarketItemCode,ALIAS",// set document field
+                    "", // set date range
+                    "", // set rank range
+                    "", // set prefix query, example: <fieldname:contains:value1>|<fieldname:contains:value2>/1, (fieldname:contains:value) and ' ', or '|', not '!' / operator (AND:1, OR:0)
+                    "", // set collection query (<fieldname:contains:value^weight | value^weight>/option...) and ' ', or '|'
+                    "", // set boost query (<fieldname:contains:value> | <field3:contains:value>...) and ' ', or '|'
+                    "", // set filter operation (<fieldname:operator:value>)
+                    "", // set groupby field(field, count)
+                    "", // set sort field group(field/order,field/order,...)
+                    "", // set categoryBoost(fieldname,matchType,boostID,boostKeyword)
+                    "categoryId:1/SC|categoryName:1/SC", // set categoryGroupBy (fieldname:value)
+                    "", // set categoryQuery (fieldname:value)
+                    "", // set property group (fieldname,min,max, groupcount)
+                    "serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,cardDiscountName,cardDiscountYn,adultYn,soldOutSp,deliverySp,stockCheckYn,recommendItemYn,storeCode,prmByQty,prmGtQty,wdlvyItemSpCd,optItemIncldYn,supermarketItemCode", // use check prefix query filed
+                    "itemCode,sellPrice,discountPrice,discountRate,pickupDate,stockCount,starPoint,exposureSeq,storeCode,pickupStartDate,pickupEndDate,supermarketItemCode", // set use check fast access field
+                    "", // set multigroupby field
+                    "", // set auth query (Auth Target Field, Auth Collection, Auth Reference Field, Authority Query)
+                    "", // set Duplicate Detection Criterion Field, RANK/DESC,DATE/DESC
+                    "gs25_reservation" // collection display name
+            }
+            ,
+            {
+                    "wine25_gs", // set index name
+                    "wine25_gs", // set collection name
+                    "0,3", // set pageinfo (start,count)
+                    "1,1,1,1,0", // set query analyzer (useKMA,isCase,useOriginal,useSynonym, duplcated detection)
+                    "RANK/DESC,DATE/DESC", // set sort field (field,order) multi sort '/'
+                    "basic,rpfmo,100", // set sort field (field,order) multi sort '/'
+                    "itemName,shortItemName,storeName",// set search field
+                    "DOCID,itemImageUrl,serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,itemName,shortItemName,sellPrice,discountPrice,discountRate,discountAmount,cardDiscountName,cardDiscountYn,extraPresentItemName,extraPresentItemShortName,extraPresentImageUrl,adultYn,pickupDate,stockCount,buyQuantity,soldOutSp,deliverySp,starPoint,prmByQty,prmGtQty,stockCheckYn,exposureSeq,categoryId,categoryName,recommendItemYn,storeName,storeCode,pickupStartDate,pickupEndDate,wdlvyItemSpCd,optItemIncldYn,supermarketItemCode,ALIAS",// set document field
+                    "", // set date range
+                    "", // set rank range
+                    "", // set prefix query, example: <fieldname:contains:value1>|<fieldname:contains:value2>/1, (fieldname:contains:value) and ' ', or '|', not '!' / operator (AND:1, OR:0)
+                    "", // set collection query (<fieldname:contains:value^weight | value^weight>/option...) and ' ', or '|'
+                    "", // set boost query (<fieldname:contains:value> | <field3:contains:value>...) and ' ', or '|'
+                    "", // set filter operation (<fieldname:operator:value>)
+                    "", // set groupby field(field, count)
+                    "", // set sort field group(field/order,field/order,...)
+                    "", // set categoryBoost(fieldname,matchType,boostID,boostKeyword)
+                    "categoryId:1/SC|categoryName:1/SC", // set categoryGroupBy (fieldname:value)
+                    "", // set categoryQuery (fieldname:value)
+                    "", // set property group (fieldname,min,max, groupcount)
+                    "serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,cardDiscountName,cardDiscountYn,adultYn,soldOutSp,deliverySp,stockCheckYn,recommendItemYn,storeCode,prmByQty,prmGtQty,wdlvyItemSpCd,optItemIncldYn,supermarketItemCode", // use check prefix query filed
+                    "itemCode,sellPrice,discountPrice,discountRate,pickupDate,stockCount,starPoint,exposureSeq,storeCode,pickupStartDate,pickupEndDate,supermarketItemCode", // set use check fast access field
+                    "", // set multigroupby field
+                    "", // set auth query (Auth Target Field, Auth Collection, Auth Reference Field, Authority Query)
+                    "", // set Duplicate Detection Criterion Field, RANK/DESC,DATE/DESC
+                    "wine25_gs" // collection display name
+            }
+            ,
+            {
+                    "wine25_gs", // set index name
+                    "category_wine25_gs", // set collection name
+                    "0,3", // set pageinfo (start,count)
+                    "1,1,1,1,0", // set query analyzer (useKMA,isCase,useOriginal,useSynonym, duplcated detection)
+                    "RANK/DESC,DATE/DESC", // set sort field (field,order) multi sort '/'
+                    "basic,rpfmo,100", // set sort field (field,order) multi sort '/'
+                    "itemName,shortItemName,storeName",// set search field
+                    "DOCID,itemImageUrl,serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,itemName,shortItemName,sellPrice,discountPrice,discountRate,discountAmount,cardDiscountName,cardDiscountYn,extraPresentItemName,extraPresentItemShortName,extraPresentImageUrl,adultYn,pickupDate,stockCount,buyQuantity,soldOutSp,deliverySp,starPoint,prmByQty,prmGtQty,stockCheckYn,exposureSeq,categoryId,categoryName,recommendItemYn,storeName,storeCode,pickupStartDate,pickupEndDate,wdlvyItemSpCd,optItemIncldYn,supermarketItemCode,ALIAS",// set document field
+                    "", // set date range
+                    "", // set rank range
+                    "", // set prefix query, example: <fieldname:contains:value1>|<fieldname:contains:value2>/1, (fieldname:contains:value) and ' ', or '|', not '!' / operator (AND:1, OR:0)
+                    "", // set collection query (<fieldname:contains:value^weight | value^weight>/option...) and ' ', or '|'
+                    "", // set boost query (<fieldname:contains:value> | <field3:contains:value>...) and ' ', or '|'
+                    "", // set filter operation (<fieldname:operator:value>)
+                    "", // set groupby field(field, count)
+                    "", // set sort field group(field/order,field/order,...)
+                    "", // set categoryBoost(fieldname,matchType,boostID,boostKeyword)
+                    "categoryId:1/SC|categoryName:1/SC", // set categoryGroupBy (fieldname:value)
+                    "", // set categoryQuery (fieldname:value)
+                    "", // set property group (fieldname,min,max, groupcount)
+                    "serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,cardDiscountName,cardDiscountYn,adultYn,soldOutSp,deliverySp,stockCheckYn,recommendItemYn,storeCode,prmByQty,prmGtQty,wdlvyItemSpCd,optItemIncldYn,supermarketItemCode", // use check prefix query filed
+                    "itemCode,sellPrice,discountPrice,discountRate,pickupDate,stockCount,starPoint,exposureSeq,storeCode,pickupStartDate,pickupEndDate,supermarketItemCode", // set use check fast access field
+                    "", // set multigroupby field
+                    "", // set auth query (Auth Target Field, Auth Collection, Auth Reference Field, Authority Query)
+                    "", // set Duplicate Detection Criterion Field, RANK/DESC,DATE/DESC
+                    "wine25_gs" // collection display name
+            }
     };
 }

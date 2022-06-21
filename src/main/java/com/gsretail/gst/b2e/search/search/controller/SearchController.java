@@ -32,15 +32,6 @@ public class SearchController {
     @Autowired
     private SearchService searchService;
 
-    @RequestMapping(value = "/search/v1/searchTest", method = {RequestMethod.POST, RequestMethod.GET})
-    public JSONObject getSearchTest(HttpServletRequest request){
-        Search search = setSearchParameter(request);
-
-        JSONObject searchResultJson = searchService.searchTest(search);
-
-        return searchResultJson;
-    }
-
     /**
      * 검색 결과 호출.
      *
@@ -60,6 +51,15 @@ public class SearchController {
         Search search = setSearchParameter(request);
 
         JSONObject searchResultJson = searchService.getDeliveryStoreSearch(search);
+
+        return searchResultJson;
+    }
+
+    @RequestMapping(value = "/search/v1/chatbotSearch", method = {RequestMethod.POST, RequestMethod.GET})
+    public JSONObject getSearchTest(HttpServletRequest request){
+        Search search = setSearchParameter(request);
+
+        JSONObject searchResultJson = searchService.chatbotSearch(search);
 
         return searchResultJson;
     }
