@@ -7,21 +7,18 @@
 
 package com.gsretail.gst.b2e.search.search.model;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.json.simple.JSONObject;
-
-import java.text.SimpleDateFormat;
+import lombok.*;
 import java.util.Date;
+import org.json.simple.JSONObject;
+import java.text.SimpleDateFormat;
 
 /**
  * com.gsretail.gst.b2e.search.search
  * Search
  *
  * @author : WISENUT
- * @date : 2022-05-16
- * @tags :
+ * @date : 2022-06-22
+ * @tags : 검색 객체
  */
 @Data
 @Getter
@@ -64,7 +61,16 @@ public class Search {
     private String StockSupermarketItemCode;
     private String wdlvyItemSpCd;
     private String optItemIncldYn;
-
+    /* 와인 */
+    private String wine25GradeCode;
+    private String wine25GradeSpCode;
+    private String wine25groupPurchaseTypeCode;
+    private String wine25BodyFillingSpCode;
+    private String wine25SugarContentSpCode;
+    private String wine25BreedSpCode;
+    private String wine25RegionSpCode;
+    private String wine25ItemKindCode;
+    private String groupPurchaseYn;
     public Search() {}
 
     public Search(JSONObject jsonObj) {
@@ -107,6 +113,16 @@ public class Search {
         this.StockSupermarketItemCode = nullCheckJsonParameter(jsonObj,"StockSupermarketItemCode","");
         this.wdlvyItemSpCd = nullCheckJsonParameter(jsonObj, "wdlvyItemSpCd", "");
         this.optItemIncldYn = nullCheckJsonParameter(jsonObj, "optItemIncldYn", "");
+        /* 와인 */
+        this.wine25GradeCode = nullCheckJsonParameter(jsonObj, "wine25GradeCode", "");
+        this.wine25GradeSpCode = nullCheckJsonParameter(jsonObj, "wine25GradeSpCode", "");
+        this.wine25groupPurchaseTypeCode = nullCheckJsonParameter(jsonObj,"wine25groupPurchaseTypeCode", "");
+        this.wine25BodyFillingSpCode = nullCheckJsonParameter(jsonObj, "wine25BodyFillingSpCode","");
+        this.wine25SugarContentSpCode = nullCheckJsonParameter(jsonObj, "wine25SugarContentSpCode", "");
+        this.wine25BreedSpCode = nullCheckJsonParameter(jsonObj, "wine25BreedSpCode","");
+        this.wine25RegionSpCode = nullCheckJsonParameter(jsonObj, "wine25RegionSpCode", "");
+        this.wine25ItemKindCode = nullCheckJsonParameter(jsonObj, "wine25ItemKindCode", "");
+        this.groupPurchaseYn = nullCheckJsonParameter(jsonObj, "groupPurchaseYn", "");
     }
 
     /**
