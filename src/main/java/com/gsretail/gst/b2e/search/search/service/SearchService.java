@@ -7,25 +7,22 @@
 
 package com.gsretail.gst.b2e.search.search.service;
 
-import com.gsretail.gst.b2e.search.search.model.Search;
 import org.json.simple.JSONObject;
-
+import com.gsretail.gst.b2e.search.search.model.Search;
 /**
  * com.gsretail.gst.b2e.search.search.service
  * SearchService
  *
- * @author : USER
- * @date : 2022-05-17
- * @tags :
+ * @author : WISENUT
+ * @date : 2022-06-22
+ * @tags : Total Search Service
  */
 public interface SearchService {
     /**
-     * 검색 결과 호출.
+     * 통합 검색 결과 호출.
      *
      * @param search     검색 객체
      * @return 검색 결과 (JSON)
      */
-
-    public JSONObject getTotalSearch(Search search);
-    public JSONObject getDeliveryStoreSearch(Search search);
+    JSONObject getTotalSearch(Search search);
 }

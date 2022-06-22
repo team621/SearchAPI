@@ -12,6 +12,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -36,9 +38,6 @@ public class WNUtils {
 
     /**
      * 문자 배열 값을 검색하여 키 값을 리턴
-     * @param fieldName
-     * @param value
-     * @param operation
      * @return
      */
     static int findArrayValue(String find, String[] arr) {
@@ -489,5 +488,137 @@ public class WNUtils {
         req_value = req_value.replaceAll(">","");
         req_value = req_value.replaceAll(">","");
         return req_value;
+    }
+
+    /**
+     * exquery 여부 확인
+     *
+     * @param search
+     * @return
+     */
+    public String setExquery(Search search) {
+        String exquery = "";
+
+        String serviceCode = search.getServiceCode();
+        if (!serviceCode.equals("")) exquery += mkExqueryString(serviceCode, "serviceCode");
+
+        String tag = search.getTag();
+        if (!tag.equals("")) exquery += mkExqueryString(tag, "tag");
+
+        String discountTag = search.getDiscountTag();
+        if (!discountTag.equals("")) exquery += mkExqueryString(discountTag, "discountTag");
+
+        String serviceTag = search.getServiceTag();
+        if (!serviceTag.equals("")) exquery += mkExqueryString(serviceTag, "serviceTag");
+
+        String wine25ItemKindName = search.getWine25ItemKindName();
+        if (!wine25ItemKindName.equals("")) exquery += mkExqueryString(wine25ItemKindName, "wine25ItemKindName");
+
+        String wine25RegionSpName = search.getWine25RegionSpName();
+        if (!wine25RegionSpName.equals("")) exquery += mkExqueryString(wine25RegionSpName, "wine25RegionSpName");
+
+        String cardDiscountName = search.getCardDiscountName();
+        if (!cardDiscountName.equals("")) exquery += mkExqueryString(cardDiscountName, "cardDiscountName");
+
+        String cardDiscountYn = search.getCardDiscountYn();
+        if (!cardDiscountYn.equals("")) exquery += mkExqueryString(cardDiscountYn, "cardDiscountYn");
+
+        String adultYn = search.getAdultYn();
+        if (!adultYn.equals("")) exquery += mkExqueryString(adultYn, "adultYn");
+
+        String soldOutSp = search.getSoldOutSp();
+        if (!soldOutSp.equals("")) exquery += mkExqueryString(soldOutSp, "soldOutSp");
+
+        String deliverySp = search.getDeliverySp();
+        if (!deliverySp.equals("")) exquery += mkExqueryString(deliverySp, "deliverySp");
+
+        String stockCheckYn = search.getStockCheckYn();
+        if (!stockCheckYn.equals("")) exquery += mkExqueryString(stockCheckYn, "stockCheckYn");
+
+        String recommendItemYn = search.getRecommendItemYn();
+        if (!recommendItemYn.equals("")) exquery += mkExqueryString(recommendItemYn, "recommendItemYn");
+
+        String storeCode = search.getStoreCode();
+        if (!"".equals(storeCode)) exquery += mkExqueryString(storeCode, "storeCode");
+
+        String prmByQty = search.getPrmByQty();
+        if (!"".equals(prmByQty)) exquery += mkExqueryString(prmByQty, "prmByQty");
+
+        String prmGtQty = search.getPrmGtQty();
+        if (!"".equals(prmGtQty)) exquery += mkExqueryString(prmGtQty, "prmGtQty");
+
+        String stockSupermarketItemCode = search.getStockSupermarketItemCode();
+        if (!"".equals(stockSupermarketItemCode)) exquery += mkExqueryString(stockSupermarketItemCode, "supermarketItemCode");
+
+        String wdlvyItemSpCd = search.getWdlvyItemSpCd();
+        if(!"".equals(wdlvyItemSpCd)) exquery += mkExqueryString(wdlvyItemSpCd, "wdlvyItemSpCd");
+
+        String optItemIncldYn = search.getOptItemIncldYn();
+        if(!"".equals(optItemIncldYn)) exquery += mkExqueryString(optItemIncldYn, "optItemIncldYn");
+
+        /* 와인 */
+        String wine25GradeCode = search.getWine25GradeCode();
+        if(!"".equals(wine25GradeCode)) exquery += mkExqueryString(wine25GradeCode, "wine25GradeCode");
+
+        String wine25GradeSpCode = search.getWine25GradeSpCode();
+        if(!"".equals(wine25GradeSpCode)) exquery += mkExqueryString(wine25GradeSpCode, "wine25GradeSpCode");
+
+        String wine25groupPurchaseTypeCode = search.getWine25groupPurchaseTypeCode();
+        if(!"".equals(wine25groupPurchaseTypeCode)) exquery += mkExqueryString(wine25groupPurchaseTypeCode, "wine25groupPurchaseTypeCode");
+
+        String wine25BodyFillingSpCode = search.getWine25BodyFillingSpCode();
+        if(!"".equals(wine25BodyFillingSpCode)) exquery += mkExqueryString(wine25BodyFillingSpCode, "wine25BodyFillingSpCode");
+
+        String wine25SugarContentSpCode = search.getWine25SugarContentSpCode();
+        if(!"".equals(wine25SugarContentSpCode)) exquery += mkExqueryString(wine25SugarContentSpCode, "wine25SugarContentSpCode");
+
+        String wine25BreedSpCode = search.getWine25BreedSpCode();
+        if(!"".equals(wine25BreedSpCode)) exquery += mkExqueryString(wine25BreedSpCode, "wine25BreedSpCode");
+
+        String wine25RegionSpCode = search.getWine25RegionSpCode();
+        if(!"".equals(wine25RegionSpCode)) exquery += mkExqueryString(wine25RegionSpCode, "wine25RegionSpCode");
+
+        String wine25ItemKindCode = search.getWine25ItemKindCode();
+        if(!"".equals(wine25ItemKindCode)) exquery += mkExqueryString(wine25ItemKindCode, "wine25ItemKindCode");
+
+        String groupPurchaseYn = search.getGroupPurchaseYn();
+        if(!"".equals(groupPurchaseYn)) exquery += mkExqueryString(groupPurchaseYn, "groupPurchaseYn");
+
+        return exquery;
+    }
+
+    /**
+     * exquery 생성
+     *
+     * @param parameter
+     * @param prefixFieldName
+     * @return String exquery
+     */
+    public String mkExqueryString(String parameter, String prefixFieldName) {
+        String exquery = "";
+
+        String[] parameterArrays = parameter.split(",");
+        exquery += "(";
+        for (int i = 0; i < parameterArrays.length; i++) {
+            if (i == parameterArrays.length - 1)
+                exquery += "<" + prefixFieldName + ":contains:" + parameterArrays[i] + ">";
+            else exquery += "<" + prefixFieldName + ":contains:" + parameterArrays[i] + "> | ";
+        }
+        exquery += ") ";
+
+        return exquery;
+    }
+
+    public String setFilterQuery(Search search) {
+        String filterQuery = "";
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        /* 가격 정보 */
+        filterQuery += "(<sellPrice:gt:"+search.getMinSellPrice() + "> ";
+        filterQuery += "<sellPrice:lt:"+search.getMaxSellPrice() + "> )";
+        /* 픽업 날짜 */
+        //filterQuery += "(<pickupStartDate:lt:"+now+"> ";
+        //filterQuery += "<pickupEndDate:gt:"+now+">)";
+
+        return filterQuery;
     }
 }
