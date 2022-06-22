@@ -334,8 +334,6 @@ public class WNCommon {
         int ret = 0;
         for (int i = 0; i < fields.length; i++) {
             ret = search.w3AddSearchField(collectionName, fields[i]);
-            System.out.println("[w3AddSearchField] " + collectionName + " / "
-                    + fields[i]);
         }
         return ret;
     }
@@ -351,7 +349,6 @@ public class WNCommon {
         int ret = 0;
         for (int i = 0; i < fields.length; i++) {
             ret = search.w3AddSearchFieldScore(collectionName, fields[i], rankScores[i]);
-            System.out.println("[w3AddSearchFieldScore] " + collectionName + " / "+ fields[i] + "/" + rankScores[i]);
         }
         return ret;
     }
@@ -368,13 +365,10 @@ public class WNCommon {
         for (int i = 0; i < searchFieldTemp.length; i++) {
             String[] searchField = WNUtils.split(searchFieldTemp[i], "/");
             if (searchField != null && searchField.length > 0) {
-                ret = search.w3AddSearchField(collectionName,
-                        searchField[0]);
-                System.out.println("[w3AddSearchField] " + collectionName + " / "+ searchField[0]);
+                ret = search.w3AddSearchField(collectionName,searchField[0]);
             }
         }
         ret = search.w3SetSearchFieldScore(collectionName, fields);
-        System.out.println("[w3AddSearchField] " + collectionName + " / " + fields);
         return ret;
     }
 
@@ -393,7 +387,6 @@ public class WNCommon {
     public int addSortField(String collectionName, String sortField, int sortOrder) {
         int ret = 0;
         ret = search.w3AddSortField(collectionName, sortField, sortOrder);
-        System.out.println("[w3AddSortField] " + collectionName + " / " + sortField);
         return ret;
     }
 
@@ -406,7 +399,6 @@ public class WNCommon {
     public int setSortField(String collectionName, String sortValue) {
         int ret = 0;
         ret = search.w3SetSortField(collectionName, sortValue);
-        System.out.println("[w3SetSortField] " + collectionName + " / " + sortValue);
         return ret;
     }
 
@@ -463,7 +455,6 @@ public class WNCommon {
             prefixQuery = fieldNameValues.trim();
         }
         int ret = search.w3SetPrefixQuery(collectionName, prefixQuery, operator);
-        System.out.println("[w3SetPrefixQuery]" + fieldNameValues);
         return ret;
     }
 
@@ -475,7 +466,6 @@ public class WNCommon {
      */
     public int setFilterOperation(String collectionName, String fieldNameValues) {
         int ret = search.w3SetFilterQuery(collectionName, fieldNameValues);
-        System.out.println("[w3SetFilterQuery]" + fieldNameValues);
         return ret;
     }
 
@@ -487,7 +477,6 @@ public class WNCommon {
      */
     public int setFilterQuery(String collectionName, String fieldNameValues) {
         int ret = search.w3SetFilterQuery(collectionName, fieldNameValues);
-        System.out.println("[w3SetFilterQuery]" + fieldNameValues);
         return ret;
     }
 
@@ -504,7 +493,6 @@ public class WNCommon {
         int ret = 0;
         for(int i=0; i< fields.length; i++) {
             ret = search.w3AddDocumentField(collectionName, fields[i], 0);
-            System.out.println("[w3AddDocumentField] " + collectionName + " / " + fields[i]);
         }
         return ret;
     }
@@ -518,7 +506,6 @@ public class WNCommon {
     public int setResultField(String collectionName, String fields) {
         int ret = 0;
         ret = search.w3SetDocumentField(collectionName, fields);
-        System.out.println("[w3SetDocumentField] " + collectionName + " / " + fields);
         return ret;
     }
 
@@ -753,13 +740,9 @@ public class WNCommon {
      * @param sortOrder
      * @return 성공이면 0을 반환한다. 실패면 0이 아닌 값을 반환한다.
      */
-    public int addSortFieldInGroup(String collectionName, String sortField,
-                                   int sortOrder) {
+    public int addSortFieldInGroup(String collectionName, String sortField,int sortOrder) {
         int ret = 0;
-        ret = search.w3AddSortFieldInGroup(collectionName, sortField,
-                sortOrder);
-        System.out.println("[w3AddSortFieldInGroup] " + collectionName + " / "
-                + sortField);
+        ret = search.w3AddSortFieldInGroup(collectionName, sortField,sortOrder);
         return ret;
     }
 
@@ -772,7 +755,6 @@ public class WNCommon {
     public int setSortFieldInGroup(String collectionName, String sortValue) {
         int ret = 0;
         ret = search.w3SetSortFieldInGroup(collectionName, sortValue);
-        System.out.println("[w3SetSortFieldInGroup] " + collectionName + " / " + sortValue);
         return ret;
     }
 
@@ -786,11 +768,8 @@ public class WNCommon {
      * @param authorityQuery
      * @return 성공이면 0을 반환한다. 실패면 0이 아닌 값을 반환한다.
      */
-    public int setAuthorityQuery(String collection, String authTargetField,
-                                 String authCollection, String authReferField, String authorityQuery ) {
-        int ret = search.w3SetAuthorityQuery(collection, authTargetField,
-                authCollection, authReferField, authorityQuery);
-        System.out.println("[w3SetAuthorityQuery]" + authorityQuery);
+    public int setAuthorityQuery(String collection, String authTargetField,String authCollection, String authReferField, String authorityQuery ) {
+        int ret = search.w3SetAuthorityQuery(collection, authTargetField,authCollection, authReferField, authorityQuery);
         return ret;
     }
 

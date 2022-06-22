@@ -8,7 +8,7 @@ import static java.lang.System.getProperties;
  * packageName    : com.gsretail.gst.b2e.search.search.common
  * fileName       : WNCollection
  * author         : USER
- * date           : 2022-06-07
+ * date           : 2022-06-22
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
@@ -16,11 +16,11 @@ import static java.lang.System.getProperties;
  * 2022-06-07        USER       최초 생성
  */
 public class WNCollection {
-    static String SEARCH_IP = "27.122.138.23";
-    static int SEARCH_PORT = 5052;
+    static String SEARCH_IP="27.122.138.23";
+    static int SEARCH_PORT=5052;
     //운영
-    public String[] COLLECTIONS = new String[]{"oneplus", "thefresh", "woodel_gs", "woodel_mart", "gs25_reservation", "wine25_gs"};
-    public String[] COLLECTIONS_NAME = new String[]{"oneplus", "thefresh", "woodel_gs", "woodel_mart", "gs25_reservation", "wine25_gs"};
+    public String[] COLLECTIONS = new String[]{"oneplus","thefresh","woodel_gs","woodel_mart","gs25_reservation","wine25_gs"};
+    public String[] COLLECTIONS_NAME = new String[]{"oneplus","thefresh","woodel_gs","woodel_mart","gs25_reservation","wine25_gs"};
 
     public String[] MERGE_COLLECTIONS = new String[]{"mergeCollection"};
 
@@ -38,7 +38,6 @@ public class WNCollection {
                             ""  // set collection multi-group-by field, delimiter: /
                     }
             };
-
 
     public String[][] COLLECTION_INFO = new String[][]{
             {
@@ -85,7 +84,7 @@ public class WNCollection {
                     "", // set collection query (<fieldname:contains:value^weight | value^weight>/option...) and ' ', or '|'
                     "", // set boost query (<fieldname:contains:value> | <field3:contains:value>...) and ' ', or '|'
                     "", // set filter operation (<fieldname:operator:value>)
-                    "", // set groupby field(field, count)
+                    "supermarketItemCode,1", // set groupby field(field, count)
                     "", // set sort field group(field/order,field/order,...)
                     "", // set categoryBoost(fieldname,matchType,boostID,boostKeyword)
                     "categoryId:1,2/SC|categoryName:1,2/SC", // set categoryGroupBy (fieldname:value)
@@ -114,7 +113,7 @@ public class WNCollection {
                     "", // set collection query (<fieldname:contains:value^weight | value^weight>/option...) and ' ', or '|'
                     "", // set boost query (<fieldname:contains:value> | <field3:contains:value>...) and ' ', or '|'
                     "", // set filter operation (<fieldname:operator:value>)
-                    "", // set groupby field(field, count)
+                    "supermarketItemCode,1", // set groupby field(field, count)
                     "", // set sort field group(field/order,field/order,...)
                     "", // set categoryBoost(fieldname,matchType,boostID,boostKeyword)
                     "categoryId:1/SC|categoryName:1/SC", // set categoryGroupBy (fieldname:value)
@@ -131,19 +130,19 @@ public class WNCollection {
             {
                     "woodel_mart", // set index name
                     "woodel_mart", // set collection name
-                    "0,3", // set pageinfo (start,count)
-                    "1,1,1,1,0", // set query analyzer (useKMA,isCase,useOriginal,useSynonym, duplcated detection)
-                    "RANK/DESC,DATE/DESC", // set sort field (field,order) multi sort '/'
-                    "basic,rpfmo,100", // set sort field (field,order) multi sort '/'
+                    "0,3",  // set pageinfo (start,count)
+                    "1,0,0,0,0", // set query analyzer (useKMA,isCase,useOriginal,useSynonym, duplcated detection)
+                    "RANK/DESC,DATE/DESC",  // set sort field (field,order) multi sort '/'
+                    "basic,rpfmo,100",  // set sort field (field,order) multi sort '/'
                     "itemName,shortItemName,storeName",// set search field
                     "DOCID,itemImageUrl,serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,itemName,shortItemName,sellPrice,discountPrice,discountRate,discountAmount,cardDiscountName,cardDiscountYn,extraPresentItemName,extraPresentItemShortName,extraPresentImageUrl,adultYn,pickupDate,stockCount,buyQuantity,soldOutSp,deliverySp,starPoint,prmByQty,prmGtQty,stockCheckYn,exposureSeq,categoryId,categoryName,recommendItemYn,storeName,storeCode,pickupStartDate,pickupEndDate,wdlvyItemSpCd,optItemIncldYn,supermarketItemCode,evntKindCd,ALIAS",// set document field
                     "", // set date range
                     "", // set rank range
-                    "", // set prefix query, example: <fieldname:contains:value1>|<fieldname:contains:value2>/1, (fieldname:contains:value) and ' ', or '|', not '!' / operator (AND:1, OR:0)
+                    "", // set prefix query, example: <fieldname:contains:value1>|<fieldname:contains:value2>/1,  (fieldname:contains:value) and ' ', or '|', not '!' / operator (AND:1, OR:0)
                     "", // set collection query (<fieldname:contains:value^weight | value^weight>/option...) and ' ', or '|'
                     "", // set boost query (<fieldname:contains:value> | <field3:contains:value>...) and ' ', or '|'
                     "", // set filter operation (<fieldname:operator:value>)
-                    "", // set groupby field(field, count)
+                    "supermarketItemCode,1", // set groupby field(field, count)
                     "", // set sort field group(field/order,field/order,...)
                     "", // set categoryBoost(fieldname,matchType,boostID,boostKeyword)
                     "categoryId:1/SC|categoryName:1/SC", // set categoryGroupBy (fieldname:value)

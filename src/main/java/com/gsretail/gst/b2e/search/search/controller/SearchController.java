@@ -7,33 +7,33 @@
 
 package com.gsretail.gst.b2e.search.search.controller;
 
-import com.gsretail.gst.b2e.search.search.model.Search;
-import com.gsretail.gst.b2e.search.search.service.SearchService;
+import java.io.BufferedReader;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import javax.servlet.http.HttpServletRequest;
+import com.gsretail.gst.b2e.search.search.model.Search;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
+import com.gsretail.gst.b2e.search.search.service.SearchService;
+import com.gsretail.gst.b2e.search.search.service.ChatBotService;
 
 /**
  * com.gsretail.gst.b2e.search.search.controller
  * SearchController
  *
  * @author : WISENUT
- * @date : 2022-05-16
- * @tags :
+ * @date : 2022-06-22
+ * @tags : Search API Controller
  */
 @RestController
 public class SearchController {
-    @Autowired
-    private SearchService searchService;
+    @Autowired private SearchService searchService;
+    @Autowired private ChatBotService chatBotService;
 
     /**
-     * 검색 결과 호출.
+     * 통합 검색 결과 호출.
      *
      * @param request the request
      */
@@ -46,24 +46,25 @@ public class SearchController {
         return searchResultJson;
     }
 
-    @RequestMapping(value = "/search/v1/deliveryStoreSearch", method = {RequestMethod.POST, RequestMethod.GET})
-    public JSONObject getStoreSearchResult(HttpServletRequest request){
+    /**
+     * 챗봇 검색 결과 호출.
+     *
+     * @param request the request
+     */
+    @RequestMapping(value = "/search/v1/chatBotSearch", method = {RequestMethod.POST, RequestMethod.GET})
+    public JSONObject getChatBotSearchResult(HttpServletRequest request){
         Search search = setSearchParameter(request);
 
-        JSONObject searchResultJson = searchService.getDeliveryStoreSearch(search);
+        JSONObject searchResultJson = chatBotService.getChatBotSearch(search);
 
         return searchResultJson;
     }
 
-    @RequestMapping(value = "/search/v1/chatbotSearch", method = {RequestMethod.POST, RequestMethod.GET})
-    public JSONObject getChatbotSearchResult(HttpServletRequest request){
-        Search search = setSearchParameter(request);
-
-        JSONObject searchResultJson = searchService.chatbotSearch(search);
-
-        return searchResultJson;
-    }
-
+    /**
+     * 검색 객체 설정 (search 객체)
+     *
+     * @param request the request
+     */
     private Search setSearchParameter(HttpServletRequest request) {
         Search search = null;
 
