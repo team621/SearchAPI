@@ -5,11 +5,12 @@
  * GS리테일의 허락없이 소스 및 이진형식을 재배포, 사용하는 행위를 금지합니다.
  */
 
-package com.gsretail.gst.b2e.search.search.service;
+package com.gsretail.gst.b2e.search.search.service.impl;
 
 import com.gsretail.gst.b2e.search.search.common.WNCollection;
 import com.gsretail.gst.b2e.search.search.common.WNSearch;
 import com.gsretail.gst.b2e.search.search.model.Search;
+import com.gsretail.gst.b2e.search.search.service.SearchService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ import static com.gsretail.gst.b2e.search.search.common.WNDefine.*;
  * SearchServiceImpl
  *
  * @author : WISENUT
- * @date : 2022-05-17
+ * @date : 2022-06-22
  * @tags :
  */
 @Service

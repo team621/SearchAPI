@@ -14,8 +14,8 @@ import org.json.simple.JSONObject;
  * com.gsretail.gst.b2e.search.search.service
  * SearchService
  *
- * @author : USER
- * @date : 2022-05-17
+ * @author : WISENUT
+ * @date : 2022-06-22
  * @tags :
  */
 public interface SearchService {
@@ -25,7 +25,7 @@ public interface SearchService {
      * @param search     검색 객체
      * @return 검색 결과 (JSON)
      */
-
-    public JSONObject getTotalSearch(Search search);
-    public JSONObject getDeliveryStoreSearch(Search search);
+    JSONObject getTotalSearch(Search search);
+    /* 사용 안함 ↓ */
+    //JSONObject getDeliveryStoreSearch(Search search);
 }
