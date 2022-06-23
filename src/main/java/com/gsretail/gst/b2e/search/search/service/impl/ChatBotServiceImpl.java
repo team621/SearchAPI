@@ -19,13 +19,13 @@ import static com.gsretail.gst.b2e.search.search.common.WNDefine.*;
 @Service
 public class ChatBotServiceImpl implements ChatBotService {
     /* 디버깅 보기 설정 */
-    boolean isDebug = true;
+    boolean isDebug = false;
     /* 검색엔진 설정 객체 생성 */
     WNUtils wnUtils = new WNUtils();
     WNCollection wncol = new WNCollection();
     @Override
     public JSONObject getChatBotSearch(Search search) {
-        String[] collections = {"woodel_gs","woodel_mart"};
+        String[] collections = {"oneplus","woodel_gs","woodel_mart"};
         String[] searchFields = null;
         JSONObject searchResult = new JSONObject();
 
@@ -117,6 +117,7 @@ public class ChatBotServiceImpl implements ChatBotService {
                     String documentFieldName = documentField[a];
                     field.put(documentFieldName ,wnsearch.getFieldInGroup(mergeCollections[i], documentFieldName , j , 0));
                 }
+                field.put("Rank" , Integer.toString(j));
                 resultFieldList.add(field);
             }
             collectionMap.put("Document" , resultFieldList);
