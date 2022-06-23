@@ -281,7 +281,7 @@ public class SearchServiceImpl implements SearchService {
                 expectedItemMap.put(itemCode, "Y");
             }
         }catch (Exception e){
-            e.printStackTrace();
+            System.out.println("[error] token not valid");
         } finally {
             if(in != null) try { in.close(); } catch(Exception e) { e.printStackTrace(); }
         }
