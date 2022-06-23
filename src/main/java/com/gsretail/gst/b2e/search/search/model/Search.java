@@ -71,6 +71,7 @@ public class Search {
     private String wine25RegionSpCode;
     private String wine25ItemKindCode;
     private String groupPurchaseYn;
+    private String token;
     public Search() {}
 
     public Search(JSONObject jsonObj) {

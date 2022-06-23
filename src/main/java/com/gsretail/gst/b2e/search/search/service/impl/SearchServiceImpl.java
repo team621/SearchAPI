@@ -8,11 +8,8 @@
 package com.gsretail.gst.b2e.search.search.service.impl;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.*;
 
@@ -22,7 +19,6 @@ import org.springframework.stereotype.Service;
 import com.gsretail.gst.b2e.search.search.common.*;
 import com.gsretail.gst.b2e.search.search.model.Search;
 import com.gsretail.gst.b2e.search.search.service.SearchService;
-
 import static com.gsretail.gst.b2e.search.search.common.WNDefine.*;
 
 /**
@@ -48,7 +44,7 @@ public class SearchServiceImpl implements SearchService {
     /**
      * 통합검색
      *
-     * @param search 검색 객체
+     * @param search     검색 객체
      * @return
      */
     public JSONObject getTotalSearch(Search search) {
@@ -72,13 +68,13 @@ public class SearchServiceImpl implements SearchService {
         setCollectionInfo(wnsearch, collections, search);
 
         /* 검색 수행 */
-        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery, true);
+        wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, useSuggestedQuery , true);
 
         /* 검색결과 생성 */
-        Map<String, Object> totalSearchResultMap = getSearchResult(wnsearch, collections, search);
+        Map<String , Object> totalSearchResultMap = getSearchResult(wnsearch, collections, search);
 
         /* 카테고리 리스트 생성 후 결과값 저장 */
-        totalSearchResultMap.put("categoryList", getCategoryList(wnsearch, collections));
+        totalSearchResultMap.put("categoryList" , getCategoryList(wnsearch, collections));
 
         JSONObject searchResult = new JSONObject();
         searchResult.put("SearchQueryResult", totalSearchResultMap);
@@ -88,7 +84,7 @@ public class SearchServiceImpl implements SearchService {
         String suggestedQuery = wnsearch.suggestedQuery;
 
         //오타검색 (전체 검색 결과가 없고 오타 수정 단어가 있을 경우, 오타검색일경우)
-        if (allTotalCount <= 0 && !suggestedQuery.equals("") && typoSearch.equals("N")) {
+        if(allTotalCount <= 0 && !suggestedQuery.equals("") && typoSearch.equals("N")) {
             //오타 검색어(기존 검색어) 저장
             typoQuery = search.getQuery();
 
@@ -99,7 +95,7 @@ public class SearchServiceImpl implements SearchService {
             JSONObject searchResultJsonTemp = getTotalSearch(search);
 
             //오타 추천 검색 결과가 없을경우 기존 검색결과 사용
-            if (allTotalCount > 0) {
+            if(allTotalCount > 0)  {
                 searchResult = searchResultJsonTemp;
             }
         }
@@ -133,8 +129,7 @@ public class SearchServiceImpl implements SearchService {
 
             /* searchField 값이 있으면 설정, 없으면 기본검색필드 */
             String searchField = search.getSearchField();
-            if (!searchField.equals("") && !searchField.equals("ALL"))
-                wnsearch.setCollectionInfoValue(collections[i], SEARCH_FIELD, search.getSearchField());
+            if (!searchField.equals("") && !searchField.equals("ALL")) wnsearch.setCollectionInfoValue(collections[i], SEARCH_FIELD, search.getSearchField());
 
             /* exquery 생성 및 설정 */
             String exquery = wnUtils.setExquery(search);
@@ -147,9 +142,8 @@ public class SearchServiceImpl implements SearchService {
             /* categoryquery 설정 */
             String categoryQuery = "";
             String[] categories = search.getArrays(search.getCategoryId());
-            for (String category : categories) categoryQuery += "categoryId|" + category + ",";
-            if (!"".equals(search.getCategoryId()))
-                wnsearch.setCollectionInfoValue(collections[i], CATEGORY_QUERY, categoryQuery);
+            for (String category : categories) categoryQuery += "categoryId|"+category+",";
+            if (!"".equals(search.getCategoryId())) wnsearch.setCollectionInfoValue(collections[i], CATEGORY_QUERY, categoryQuery);
 
             /* 선택된 컬렉션이 WNCollection 몇번째 인지 index값 */
             int collectionIndex = wnsearch.getCollIdx(collections[i]);
@@ -169,8 +163,8 @@ public class SearchServiceImpl implements SearchService {
      * @param search
      * @return 검색 결과값
      */
-    private Map<String, Object> getSearchResult(WNSearch wnsearch, String[] collections, Search search) {
-        Map<String, Object> searchResultMap = new HashMap<>();
+    private Map<String , Object> getSearchResult(WNSearch wnsearch, String[] collections, Search search) {
+        Map<String , Object> searchResultMap = new HashMap<>();
         JSONArray collectionJsonArray = new JSONArray();
 
         searchResultMap.put("query", search.getQuery());
@@ -180,18 +174,14 @@ public class SearchServiceImpl implements SearchService {
 
         /* 컬렉션별 검색 결과 생성 */
         for (int i = 0; i < collections.length; i++) {
-            Map<String , String> expectedItemMap = new HashMap<>();
-            if(collections[i].equals("wine25_gs")){
-
-            }else if(collections[i].equals("woodel_gs")){
-
-            }else if(collections[i].equals("woodel_mart")){
-
-            }
-
             JSONObject documentset = new JSONObject();
             int resultCount = 0;
             int totalCount = 0;
+
+            /* 컬렉션 별 찜 목록 호출 */
+            String itemCode = "";
+            HashMap<String, String> expectedItemMap = new HashMap<>();
+            if(search.getToken() != null) expectedItemMap = getExpectedItems(collections[i], search);
 
             /* 선택된 컬렉션이 WNCollection 몇번째 인지 index값 */
             int collectionIndex = wnsearch.getCollIdx(collections[i]);
@@ -216,19 +206,22 @@ public class SearchServiceImpl implements SearchService {
 
             List<Map<String, Map<String, String>>> fieldList = new ArrayList<>();
             for (int j = 0; j < resultCount; j++) {
-                Map<String, String> fieldMap = new HashMap<String, String>();
+                Map<String , String> fieldMap = new HashMap<String , String>();
 
                 /* supermarketItemCode로 그룹화 하는 컬렉션 분기하여 결과값 생성 */
                 for (String documentField : documentFields) {
                     if (!wncol.COLLECTION_INFO[collectionIndex][GROUP_BY].equals("")) {
                         fieldMap.put(documentField, wnsearch.getFieldInGroup(collections[i], documentField, j, 0));
+                        itemCode = wnsearch.getFieldInGroup(collections[i], "itemCode", j, 0);
                     } else {
                         fieldMap.put(documentField, wnsearch.getField(collections[i], documentField, j, false));
+                        itemCode = wnsearch.getField(collections[i], "itemCode", j, false);
                     }
+                    fieldMap.put("expectedItem", expectedItemMap.get(itemCode) == null ? "N" : "Y");
                 }
 
-                Map<String, Map<String, String>> fieldListMap = new HashMap<String, Map<String, String>>();
-                fieldListMap.put("field", fieldMap);
+                Map<String , Map<String , String>> fieldListMap = new HashMap<String , Map<String , String>>();
+                fieldListMap.put("field" , fieldMap);
                 fieldList.add(fieldListMap);
             }
 
@@ -240,6 +233,55 @@ public class SearchServiceImpl implements SearchService {
         searchResultMap.put("Collection", collectionJsonArray);
 
         return searchResultMap;
+    }
+
+    /**
+     * 찜목록 호출
+     *
+     * @param collection
+     * @return 검색 결과값
+     */
+    private HashMap<String, String> getExpectedItems(String collection, Search search){
+        HashMap<String,String> expectedItemMap = new HashMap<>();
+        String url = "";
+
+        if(collection.equals("wine25_gs")) url = "https://b2c-apigw.woodongsdev.com/refrigerator/v1/wine25/purchase/estimated/items";
+        else if(collection.equals("woodel_gs")) url = "https://b2c-apigw.woodongsdev.com/thepop/v1/wdelivery/expected/items?brandDivisionCode=02";
+        else if(collection.equals("woodel_mart")) url = "https://b2c-apigw.woodongsdev.com/thepop/v1/wdelivery/expected/items?brandDivisionCode=03";
+        else return expectedItemMap;
+
+        BufferedReader in = null;
+        try{
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection)obj.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("Authorization",search.getToken());
+
+            in = new BufferedReader(new InputStreamReader(con.getInputStream(),"UTF-8"));
+
+            String line;
+            String expectedAPIResult = "";
+            while((line = in.readLine()) != null) { // response를 차례대로 출력
+                expectedAPIResult += line;
+            }
+
+            JSONParser parser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) parser.parse(expectedAPIResult);
+            JSONObject jsonObject1 = (JSONObject) jsonObject.get("data");
+
+            JSONArray jsonArray = (JSONArray) jsonObject1.get("expectedItemList");
+
+            for(int i=0; i<jsonArray.size(); i++){
+                JSONObject jsonObject2 = (JSONObject) jsonArray.get(i);
+                String itemCode = (String) jsonObject2.get("itemCode");
+                expectedItemMap.put(itemCode, "Y");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if(in != null) try { in.close(); } catch(Exception e) { e.printStackTrace(); }
+        }
+        return expectedItemMap;
     }
 
     /**
@@ -272,7 +314,7 @@ public class SearchServiceImpl implements SearchService {
             for (int a = 0; a < categoryCount; a++) {
                 String categoryName = wnsearch.getCategoryName(collections[i], categoryField, dept, a);
                 int categoryCnt = wnsearch.getDocumentCountInCategory(collections[i], categoryField, dept, a);
-                if (!categoryName.equals("null")) categoryListMap.put(categoryName, categoryCnt);
+                if(!categoryName.equals("null")) categoryListMap.put(categoryName, categoryCnt);
             }
         }
 
@@ -289,4 +331,3 @@ public class SearchServiceImpl implements SearchService {
         return categoryList;
     }
 }
-
