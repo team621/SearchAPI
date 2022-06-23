@@ -40,6 +40,7 @@ public class SearchController {
     @RequestMapping(value = "/search/v1/totalSearch", method = {RequestMethod.POST, RequestMethod.GET})
     public JSONObject getSearchResult(HttpServletRequest request){
         Search search = setSearchParameter(request);
+        search.setToken(request.getHeader("Authorization"));
 
         JSONObject searchResultJson = searchService.getTotalSearch(search);
 

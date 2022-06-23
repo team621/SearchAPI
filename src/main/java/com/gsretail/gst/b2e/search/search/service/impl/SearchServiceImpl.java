@@ -7,8 +7,14 @@
 
 package com.gsretail.gst.b2e.search.search.service.impl;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.*;
+
 import org.json.simple.*;
+import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
 import com.gsretail.gst.b2e.search.search.common.*;
 import com.gsretail.gst.b2e.search.search.model.Search;
@@ -172,6 +178,11 @@ public class SearchServiceImpl implements SearchService {
             int resultCount = 0;
             int totalCount = 0;
 
+            /* 컬렉션 별 찜 목록 호출 */
+            String itemCode = "";
+            HashMap<String, String> expectedItemMap = new HashMap<>();
+            if(search.getToken() != null) expectedItemMap = getExpectedItems(collections[i], search);
+
             /* 선택된 컬렉션이 WNCollection 몇번째 인지 index값 */
             int collectionIndex = wnsearch.getCollIdx(collections[i]);
             /* supermarketItemCode로 그룹화 하는 컬렉션 선별하여 검색 결과 count 생성 */
@@ -201,9 +212,12 @@ public class SearchServiceImpl implements SearchService {
                 for (String documentField : documentFields) {
                     if (!wncol.COLLECTION_INFO[collectionIndex][GROUP_BY].equals("")) {
                         fieldMap.put(documentField, wnsearch.getFieldInGroup(collections[i], documentField, j, 0));
+                        itemCode = wnsearch.getFieldInGroup(collections[i], "itemCode", j, 0);
                     } else {
                         fieldMap.put(documentField, wnsearch.getField(collections[i], documentField, j, false));
+                        itemCode = wnsearch.getField(collections[i], "itemCode", j, false);
                     }
+                    fieldMap.put("expectedItem", expectedItemMap.get(itemCode) == null ? "N" : "Y");
                 }
 
                 Map<String , Map<String , String>> fieldListMap = new HashMap<String , Map<String , String>>();
@@ -219,6 +233,55 @@ public class SearchServiceImpl implements SearchService {
         searchResultMap.put("Collection", collectionJsonArray);
 
         return searchResultMap;
+    }
+
+    /**
+     * 찜목록 호출
+     *
+     * @param collection
+     * @return 검색 결과값
+     */
+    private HashMap<String, String> getExpectedItems(String collection, Search search){
+        HashMap<String,String> expectedItemMap = new HashMap<>();
+        String url = "";
+
+        if(collection.equals("wine25_gs")) url = "https://b2c-apigw.woodongsdev.com/refrigerator/v1/wine25/purchase/estimated/items";
+        else if(collection.equals("woodel_gs")) url = "https://b2c-apigw.woodongsdev.com/thepop/v1/wdelivery/expected/items?brandDivisionCode=02";
+        else if(collection.equals("woodel_mart")) url = "https://b2c-apigw.woodongsdev.com/thepop/v1/wdelivery/expected/items?brandDivisionCode=03";
+        else return expectedItemMap;
+
+        BufferedReader in = null;
+        try{
+            URL obj = new URL(url);
+            HttpURLConnection con = (HttpURLConnection)obj.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("Authorization",search.getToken());
+
+            in = new BufferedReader(new InputStreamReader(con.getInputStream(),"UTF-8"));
+
+            String line;
+            String expectedAPIResult = "";
+            while((line = in.readLine()) != null) { // response를 차례대로 출력
+                expectedAPIResult += line;
+            }
+
+            JSONParser parser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) parser.parse(expectedAPIResult);
+            JSONObject jsonObject1 = (JSONObject) jsonObject.get("data");
+
+            JSONArray jsonArray = (JSONArray) jsonObject1.get("expectedItemList");
+
+            for(int i=0; i<jsonArray.size(); i++){
+                JSONObject jsonObject2 = (JSONObject) jsonArray.get(i);
+                String itemCode = (String) jsonObject2.get("itemCode");
+                expectedItemMap.put(itemCode, "Y");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if(in != null) try { in.close(); } catch(Exception e) { e.printStackTrace(); }
+        }
+        return expectedItemMap;
     }
 
     /**
