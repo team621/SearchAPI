@@ -25,7 +25,7 @@ public class ChatBotServiceImpl implements ChatBotService {
     WNCollection wncol = new WNCollection();
     @Override
     public JSONObject getChatBotSearch(Search search) {
-        String[] collections = {"woodel_gs","woodel_mart"};
+        String[] collections = {"oneplus","woodel_gs","woodel_mart"};
         String[] searchFields = null;
         JSONObject searchResult = new JSONObject();
 
