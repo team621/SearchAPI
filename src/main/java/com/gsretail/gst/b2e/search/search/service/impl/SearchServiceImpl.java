@@ -207,7 +207,6 @@ public class SearchServiceImpl implements SearchService {
             List<Map<String, Map<String, String>>> fieldList = new ArrayList<>();
             for (int j = 0; j < resultCount; j++) {
                 Map<String , String> fieldMap = new HashMap<String , String>();
-
                 /* supermarketItemCode로 그룹화 하는 컬렉션 분기하여 결과값 생성 */
                 for (String documentField : documentFields) {
                     if (!wncol.COLLECTION_INFO[collectionIndex][GROUP_BY].equals("")) {
@@ -266,10 +265,15 @@ public class SearchServiceImpl implements SearchService {
             }
 
             JSONParser parser = new JSONParser();
+            JSONArray jsonArray ;
             JSONObject jsonObject = (JSONObject) parser.parse(expectedAPIResult);
-            JSONObject jsonObject1 = (JSONObject) jsonObject.get("data");
 
-            JSONArray jsonArray = (JSONArray) jsonObject1.get("expectedItemList");
+            if(collection.equals("wine25_gs")){
+                jsonArray = (JSONArray) jsonObject.get("data");
+            }else{
+                JSONObject jsonObject1 = (JSONObject) jsonObject.get("data");
+                jsonArray = (JSONArray) jsonObject1.get("expectedItemList");
+            }
 
             for(int i=0; i<jsonArray.size(); i++){
                 JSONObject jsonObject2 = (JSONObject) jsonArray.get(i);
