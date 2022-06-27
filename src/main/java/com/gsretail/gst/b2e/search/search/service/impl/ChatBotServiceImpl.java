@@ -12,7 +12,7 @@ import static com.gsretail.gst.b2e.search.search.common.WNDefine.*;
  * com.gsretail.gst.b2e.search.search.service.impl
  * ChatBotServiceImpl
  *
- * @author : USER
+ * @author : WISENUT
  * @date : 2022-06-22
  * @tags :
  */
@@ -25,9 +25,14 @@ public class ChatBotServiceImpl implements ChatBotService {
     WNCollection wncol = new WNCollection();
     @Override
     public JSONObject getChatBotSearch(Search search) {
-        String[] collections = {"oneplus","woodel_gs","woodel_mart"};
+        String[] collections = {"oneplus","thefresh","woodel_gs","woodel_mart","gs25_reservation","wine25_gs","giftcard"};
         String[] searchFields = null;
         JSONObject searchResult = new JSONObject();
+        for (String collection : collections) {
+
+        }
+
+
 
         /* 머지 컬렉션 호출 */
         String[] mergeCollections = wncol.MERGE_COLLECTIONS;
