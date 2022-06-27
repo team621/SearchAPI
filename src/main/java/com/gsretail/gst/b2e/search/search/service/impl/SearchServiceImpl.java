@@ -255,6 +255,7 @@ public class SearchServiceImpl implements SearchService {
             HttpURLConnection con = (HttpURLConnection)obj.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("Authorization",search.getToken());
+            con.setConnectTimeout(1*1000);
 
             in = new BufferedReader(new InputStreamReader(con.getInputStream(),"UTF-8"));
 
@@ -281,7 +282,7 @@ public class SearchServiceImpl implements SearchService {
                 expectedItemMap.put(itemCode, "Y");
             }
         }catch (Exception e){
-            System.out.println("[error] token not valid");
+            System.out.println("[error] expectedItem API Error !! (made by GSRetail)");
         } finally {
             if(in != null) try { in.close(); } catch(Exception e) { e.printStackTrace(); }
         }

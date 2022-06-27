@@ -28,10 +28,10 @@ public class WNCollection {
             {
                     {
                             "mergeCollection", // set merge collection name
-                            "oneplus/woodel_gs/woodel_mart", // set collection name, delimiter: /
+                            "oneplus/thefresh/woodel_gs/woodel_mart/gs25_reservation/wine25_gs/giftcard", // set collection name, delimiter: /
                             "0,3",  // set merge collection pageinfo (start,count)
                             "itemImageUrl,itemName,sellPrice,discountPrice,itemCode,supermarketItemCode,ALIAS",// set merge document field
-                            "itemImageUrl,itemName,sellPrice,discountPrice,itemCode,supermarketItemCode,ALIAS/itemImageUrl,itemName,sellPrice,discountPrice,itemCode,supermarketItemCode,ALIAS/itemImageUrl,itemName,sellPrice,discountPrice,itemCode,supermarketItemCode,ALIAS", // set document field, delimiter: /
+                            "itemImageUrl,itemName,sellPrice,discountPrice,itemCode,supermarketItemCode,ALIAS/itemImageUrl,itemName,sellPrice,discountPrice,itemCode,supermarketItemCode,ALIAS/itemImageUrl,itemName,sellPrice,discountPrice,itemCode,supermarketItemCode,ALIAS/itemImageUrl,itemName,sellPrice,discountPrice,itemCode,supermarketItemCode,ALIAS/itemImageUrl,itemName,sellPrice,discountPrice,itemCode,supermarketItemCode,ALIAS/itemImageUrl,itemName,sellPrice,discountPrice,itemCode,supermarketItemCode,ALIAS/itemImageUrl,itemName,sellPrice,discountPrice,itemCode,supermarketItemCode,ALIAS", // set document field, delimiter: /
                             "", // set merge collection multi-group-by field
                             "", // set merge collection multi-group-by field, delimiter: /
                             "", // set merge collection category-group-by field
@@ -232,11 +232,11 @@ public class WNCollection {
                     "", // set groupby field(field, count)
                     "", // set sort field group(field/order,field/order,...)
                     "", // set categoryBoost(fieldname,matchType,boostID,boostKeyword)
-                    "categoryId:1/SC|categoryName:1/SC", // set categoryGroupB (fieldname:value)
+                    "categoryId:1/SC|categoryName:1/SC", // set categoryGroupBy (fieldname:value)
                     "", // set categoryQuery (fieldname:value)
                     "", // set property group (fieldname,min,max, groupcount)
-                    "serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,cardDiscountName,cardDiscountYn,adultYn,soldOutSp,deliverySp,stockCheckYn,recommendItemYn,storeCode,prmByQty,prmGtQty,wdlvyItemSpCd,optItemIncldYn,supermarketItemCode,wine25GradeCode,wine25GradeSpCode,wine25groupPurchaseTypeCode,wine25BodyFillingSpCode,wine25SugarContentSpCode,wine25BreedSpCode,wine25RegionSpCode,wine25ItemKindCode", // use check prefix query filed
-                    "itemCode,sellPrice,discountPrice,discountRate,stockCount,starPoint,exposureSeq,storeCode,supermarketItemCode,pickupDate,pickupStartDate,pickupEndDate", // set use check fast access field
+                    "serviceCode,tag,discountTag,serviceTag,wine25ItemKindName,wine25RegionSpName,itemCode,cardDiscountName,cardDiscountYn,adultYn,soldOutSp,deliverySp,stockCheckYn,recommendItemYn,storeCode,prmByQty,prmGtQty", // use check prefix query filed
+                    "itemCode,sellPrice,discountPrice,discountRate,pickupDate,stockCount,starPoint,exposureSeq,pickupStartDate,pickupEndDate,supermarketItemCode", // set use check fast access field
                     "", // set multigroupby field
                     "", // set auth query (Auth Target Field, Auth Collection, Auth Reference Field, Authority Query)
                     "", // set Duplicate Detection Criterion Field, RANK/DESC,DATE/DESC
