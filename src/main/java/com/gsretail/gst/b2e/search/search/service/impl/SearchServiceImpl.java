@@ -33,7 +33,7 @@ public class SearchServiceImpl implements SearchService {
     /* 오타검색을 위한 전체 검색 결과 카운트 */
     int allTotalCount = 0;
     /* 디버깅 보기 설정 */
-    boolean isDebug = false;
+    boolean isDebug = true;
     /* 검색엔진 설정 객체 생성 */
     WNUtils wnUtils = new WNUtils();
     WNCollection wncol = new WNCollection();
@@ -295,6 +295,7 @@ public class SearchServiceImpl implements SearchService {
     private Object getCategoryList(WNSearch wnsearch, String[] collections) {
         Map<String, Integer> categoryListMap = new HashMap<>();
         for (int i = 0; i < collections.length; i++) {
+
             /* collection index 확인 */
             int collectionIndex = wnsearch.getCollIdx(collections[i]);
             if(!wncol.COLLECTION_INFO[collectionIndex][CATEGORY_GROUPBY].equals("")){
