@@ -25,14 +25,9 @@ public class ChatBotServiceImpl implements ChatBotService {
     WNCollection wncol = new WNCollection();
     @Override
     public JSONObject getChatBotSearch(Search search) {
-        String[] collections = {"oneplus","thefresh","woodel_gs","woodel_mart","gs25_reservation","wine25_gs","giftcard"};
+        String[] collections = {"oneplus","thefresh","woodel_gs","woodel_gs_pick","woodel_mart","gs25_reservation","wine25_gs","giftcard"};
         String[] searchFields = null;
         JSONObject searchResult = new JSONObject();
-        for (String collection : collections) {
-
-        }
-
-
 
         /* 머지 컬렉션 호출 */
         String[] mergeCollections = wncol.MERGE_COLLECTIONS;
@@ -47,7 +42,6 @@ public class ChatBotServiceImpl implements ChatBotService {
         for(int i = 0 ; i < mergeCollections.length ; i ++){
             wnsearch.setMergeCollectionInfoValue(mergeCollections[i] , MERGE_PAGE_INFO,search.getStartCount() + "," + search.getListCount());
         }
-
         /* 검색 수행 */
         wnsearch.search(search.getQuery(), false, CONNECTION_CLOSE, false , true);
 
@@ -76,7 +70,8 @@ public class ChatBotServiceImpl implements ChatBotService {
             if (!"".equals(search.getQuery())) {
                 wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
             } else {
-                wnsearch.setCollectionInfoValue(collections[i], DATE_RANGE, search.getStartDate().replaceAll("[.]", "/") + ",2030/01/01,-");
+                System.out.println("hi else");
+                wnsearch.setCollectionInfoValue(collections[i], DATE_RANGE,  "1970/01/01,2030/01/01,-");
                 wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
             }
 

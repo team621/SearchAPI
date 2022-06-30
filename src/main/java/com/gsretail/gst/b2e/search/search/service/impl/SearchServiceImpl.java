@@ -7,12 +7,9 @@
 
 package com.gsretail.gst.b2e.search.search.service.impl;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 import java.util.*;
-
 import org.json.simple.*;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
@@ -95,9 +92,7 @@ public class SearchServiceImpl implements SearchService {
             JSONObject searchResultJsonTemp = getTotalSearch(search);
 
             //오타 추천 검색 결과가 없을경우 기존 검색결과 사용
-            if(allTotalCount > 0)  {
-                searchResult = searchResultJsonTemp;
-            }
+            if(allTotalCount > 0)  searchResult = searchResultJsonTemp;
         }
         //오타 검색어 초기화
         typoQuery = "";
@@ -121,10 +116,10 @@ public class SearchServiceImpl implements SearchService {
 
             /* 검색어가 없으면 DATE_RANGE 로 전체 데이터 출력 */
             if (!"".equals(search.getQuery())) {
-                wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
+                wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort());
             } else {
                 wnsearch.setCollectionInfoValue(collections[i], DATE_RANGE, search.getStartDate().replaceAll("[.]", "/") + ",2030/01/01,-");
-                wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
+                wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort());
             }
 
             /* searchField 값이 있으면 설정, 없으면 기본검색필드 */
@@ -136,7 +131,8 @@ public class SearchServiceImpl implements SearchService {
             if (!"".equals(exquery)) wnsearch.setCollectionInfoValue(collections[i], EXQUERY_FIELD, exquery);
 
             /* filterquery 설정 */
-            String filterQuery = wnUtils.setFilterQuery(search);
+            String filterQuery = "";
+            if(!collections[i].equals("store") && !collections[i].equals("exhibition")) filterQuery = wnUtils.setFilterQuery(search);
             wnsearch.setCollectionInfoValue(collections[i], FILTER_OPERATION, filterQuery);
 
             /* categoryquery 설정 */
@@ -150,7 +146,7 @@ public class SearchServiceImpl implements SearchService {
             /* 통합검색시 supermarketItemCode(상품 고유 번호) 이용하여 그룹화 */
             if (!wncol.COLLECTION_INFO[collectionIndex][GROUP_BY].equals("")) {
                 wnsearch.setCollectionInfoValue(collections[i], GROUP_BY, wncol.COLLECTION_INFO[collectionIndex][GROUP_BY]);
-                wnsearch.setCollectionInfoValue(collections[i], GROUP_SORT_FIELD, search.getSort() + ",exposureSeq/DESC");
+                wnsearch.setCollectionInfoValue(collections[i], GROUP_SORT_FIELD, search.getSort());
             }
         }
     }
@@ -255,13 +251,13 @@ public class SearchServiceImpl implements SearchService {
             HttpURLConnection con = (HttpURLConnection)obj.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("Authorization",search.getToken());
-            con.setConnectTimeout(1*1000);
+            con.setConnectTimeout(4*100);
 
             in = new BufferedReader(new InputStreamReader(con.getInputStream(),"UTF-8"));
 
             String line;
             String expectedAPIResult = "";
-            while((line = in.readLine()) != null) { // response를 차례대로 출력
+            while((line = in.readLine()) != null) {
                 expectedAPIResult += line;
             }
 
@@ -301,25 +297,27 @@ public class SearchServiceImpl implements SearchService {
         for (int i = 0; i < collections.length; i++) {
             /* collection index 확인 */
             int collectionIndex = wnsearch.getCollIdx(collections[i]);
-            /* 카테고리 리스트 출력 */
-            String[] categoryFieldList = wncol.COLLECTION_INFO[collectionIndex][CATEGORY_GROUPBY].split("\\|");
-            /* categoryGroupBy 필드명 */
-            String categoryField = categoryFieldList[1].split(":")[0];
-            /* categoryGroupBy dept */
-            String categoryDept = categoryFieldList[1].split(":")[1];
+            if(!wncol.COLLECTION_INFO[collectionIndex][CATEGORY_GROUPBY].equals("")){
+                /* 카테고리 리스트 출력 */
+                String[] categoryFieldList = wncol.COLLECTION_INFO[collectionIndex][CATEGORY_GROUPBY].split("\\|");
+                /* categoryGroupBy 필드명 */
+                String categoryField = categoryFieldList[1].split(":")[0];
+                /* categoryGroupBy dept */
+                String categoryDept = categoryFieldList[1].split(":")[1];
 
-            int dept = 1;
-            for (int a = 0; a < categoryDept.length(); a++) {
-                if (categoryDept.charAt(a) == ',') dept++;
-            }
+                int dept = 1;
+                for (int a = 0; a < categoryDept.length(); a++) {
+                    if (categoryDept.charAt(a) == ',') dept++;
+                }
 
-            int categoryCount = wnsearch.getCategoryCount(collections[i], categoryField, dept);
+                int categoryCount = wnsearch.getCategoryCount(collections[i], categoryField, dept);
 
-            /* 컬렉션 별 카테고리 리스트 저장 */
-            for (int a = 0; a < categoryCount; a++) {
-                String categoryName = wnsearch.getCategoryName(collections[i], categoryField, dept, a);
-                int categoryCnt = wnsearch.getDocumentCountInCategory(collections[i], categoryField, dept, a);
-                if(!categoryName.equals("null")) categoryListMap.put(categoryName, categoryCnt);
+                /* 컬렉션 별 카테고리 리스트 저장 */
+                for (int a = 0; a < categoryCount; a++) {
+                    String categoryName = wnsearch.getCategoryName(collections[i], categoryField, dept, a);
+                    int categoryCnt = wnsearch.getDocumentCountInCategory(collections[i], categoryField, dept, a);
+                    if(!categoryName.equals("null")) categoryListMap.put(categoryName, categoryCnt);
+                }
             }
         }
 

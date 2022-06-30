@@ -584,6 +584,15 @@ public class WNUtils {
         String groupPurchaseYn = search.getGroupPurchaseYn();
         if(!"".equals(groupPurchaseYn)) exquery += mkExqueryString(groupPurchaseYn, "groupPurchaseYn");
 
+        String svcKindCd = search.getSvcKindCd();
+        if(!"".equals(svcKindCd)) exquery += mkExqueryString(svcKindCd, "svcKindCd");
+
+        String townCode = search.getTownCode();
+        if(!"".equals(townCode)) exquery += mkExqueryString(townCode, "townCode");
+
+        String storePropertyCode = search.getStorePropertyCode();
+        if(!"".equals(storePropertyCode)) exquery += mkExqueryString(storePropertyCode, "storePropertyCode");
+
         return exquery;
     }
 

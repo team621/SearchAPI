@@ -39,7 +39,7 @@ public class SearchController {
      */
     @RequestMapping(value = "/search/v1/totalSearch", method = {RequestMethod.POST, RequestMethod.GET})
     public JSONObject getSearchResult(HttpServletRequest request){
-        Search search = setSearchParameter(request);
+        Search search = setSearchParameter(request, "total");
         search.setToken(request.getHeader("Authorization"));
 
         JSONObject searchResultJson = searchService.getTotalSearch(search);
@@ -54,7 +54,7 @@ public class SearchController {
      */
     @RequestMapping(value = "/search/v1/chatBotSearch", method = {RequestMethod.POST, RequestMethod.GET})
     public JSONObject getChatBotSearchResult(HttpServletRequest request){
-        Search search = setSearchParameter(request);
+        Search search = setSearchParameter(request, "chatBot");
 
         JSONObject searchResultJson = chatBotService.getChatBotSearch(search);
 
@@ -65,8 +65,9 @@ public class SearchController {
      * 검색 객체 설정 (search 객체)
      *
      * @param request the request
+     * @param flag 검색 유형 구분 (total : 통합검색 / chatBot : 챗봇 검색)
      */
-    private Search setSearchParameter(HttpServletRequest request) {
+    private Search setSearchParameter(HttpServletRequest request, String flag) {
         Search search = null;
 
         StringBuffer requestBuffer = new StringBuffer();
@@ -79,7 +80,7 @@ public class SearchController {
             JSONParser jsonParser = new JSONParser();
             JSONObject jsonObj = (JSONObject) jsonParser.parse(requestBuffer.toString());
 
-            search = new Search(jsonObj);
+            search = new Search(jsonObj, flag);
         }catch (Exception e){
             throw new RuntimeException(e);
         }

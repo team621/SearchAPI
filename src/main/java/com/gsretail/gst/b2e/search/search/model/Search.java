@@ -71,10 +71,15 @@ public class Search {
     private String wine25RegionSpCode;
     private String wine25ItemKindCode;
     private String groupPurchaseYn;
+    /*와인 끝*/
+    private String svcKindCd;
+    private String townCode;
+    private String storePropertyCode;
+    /*토큰 정보*/
     private String token;
     public Search() {}
 
-    public Search(JSONObject jsonObj) {
+    public Search(JSONObject jsonObj, String flag) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
         Date today = new Date();
         String todayStr = dateFormat.format(today);
@@ -83,7 +88,8 @@ public class Search {
         this.collection = nullCheckJsonParameter(jsonObj, "collection", "ALL");
         this.sort = nullCheckJsonParameter(jsonObj, "sort", "RANK/DESC");
         this.startCount = Integer.parseInt(nullCheckJsonParameter(jsonObj, "startCount", "0"));
-        this.listCount = Integer.parseInt(nullCheckJsonParameter(jsonObj, "listCount", "3"));
+        if(flag.equals("total")) this.listCount = Integer.parseInt(nullCheckJsonParameter(jsonObj, "listCount", "3"));
+        else this.listCount = Integer.parseInt(nullCheckJsonParameter(jsonObj, "listCount", "9"));
         this.documentField = "";
         this.searchField = nullCheckJsonParameter(jsonObj, "searchField", "ALL");
         this.startDate = nullCheckJsonParameter(jsonObj, "startDate", "1970/01/01");
@@ -124,6 +130,10 @@ public class Search {
         this.wine25RegionSpCode = nullCheckJsonParameter(jsonObj, "wine25RegionSpCode", "");
         this.wine25ItemKindCode = nullCheckJsonParameter(jsonObj, "wine25ItemKindCode", "");
         this.groupPurchaseYn = nullCheckJsonParameter(jsonObj, "groupPurchaseYn", "");
+        /*와인 끝 */
+        this.svcKindCd = nullCheckJsonParameter(jsonObj, "svcKindCd", "");
+        this.townCode = nullCheckJsonParameter(jsonObj, "townCode", "");
+        this.storePropertyCode = nullCheckJsonParameter(jsonObj, "storePropertyCode", "");
     }
 
     /**
