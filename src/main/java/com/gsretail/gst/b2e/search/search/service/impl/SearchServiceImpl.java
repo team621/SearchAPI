@@ -294,6 +294,7 @@ public class SearchServiceImpl implements SearchService {
     private Object getCategoryList(WNSearch wnsearch, String[] collections) {
         Map<String, Integer> categoryListMap = new HashMap<>();
         for (int i = 0; i < collections.length; i++) {
+
             /* collection index 확인 */
             int collectionIndex = wnsearch.getCollIdx(collections[i]);
             if(!wncol.COLLECTION_INFO[collectionIndex][CATEGORY_GROUPBY].equals("")){
