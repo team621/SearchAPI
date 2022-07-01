@@ -33,7 +33,7 @@ public class SearchServiceImpl implements SearchService {
     /* 오타검색을 위한 전체 검색 결과 카운트 */
     int allTotalCount = 0;
     /* 디버깅 보기 설정 */
-    boolean isDebug = false;
+    boolean isDebug = true;
     /* 검색엔진 설정 객체 생성 */
     WNUtils wnUtils = new WNUtils();
     WNCollection wncol = new WNCollection();
@@ -76,30 +76,31 @@ public class SearchServiceImpl implements SearchService {
         JSONObject searchResult = new JSONObject();
         searchResult.put("SearchQueryResult", totalSearchResultMap);
 
-        //오타에 대한 정타 추천 검색어
+        /* 오타에 대한 정타 추천 검색어 */
         String typoSearch = search.getTypoSearch();
         String suggestedQuery = wnsearch.suggestedQuery;
 
-        //오타검색 (전체 검색 결과가 없고 오타 수정 단어가 있을 경우, 오타검색일경우)
+        /* 오타검색 (전체 검색 결과가 없고 오타 수정 단어가 있을 경우, 오타검색이 아닐 경우)_오타 검색 : 오타로 검색 */
         if(allTotalCount <= 0 && !suggestedQuery.equals("") && typoSearch.equals("N")) {
-            //오타 검색어(기존 검색어) 저장
+            /* 오타 검색어(기존 검색어) 저장 */
             typoQuery = search.getQuery();
 
-            //검색어 (오타 → 정타 추천) 수정
+            /* 검색어 (오타 → 정타 추천) 수정 */
             search.setQuery(suggestedQuery);
 
-            //오타로 검색된 기존 결과 Temp 저장
+            /* 오타로 검색된 기존 결과 Temp 저장 */
             JSONObject searchResultJsonTemp = getTotalSearch(search);
 
-            //오타 추천 검색 결과가 없을경우 기존 검색결과 사용
+            /* 오타 추천 검색 결과가 없을경우 기존 검색결과 사용 */
             if(allTotalCount > 0)  searchResult = searchResultJsonTemp;
         }
-        //오타 검색어 초기화
+        /* 오타 검색어 초기화 */
         typoQuery = "";
 
-        // 디버그 메시지 출력
+        /* 디버그 메시지 출력 */
         String debugMsg = wnsearch.printDebug() != null ? wnsearch.printDebug().trim() : "";
         if (isDebug) System.out.println(debugMsg.replace("<br>", "\n"));
+
         return searchResult;
     }
 
@@ -132,6 +133,7 @@ public class SearchServiceImpl implements SearchService {
 
             /* filterquery 설정 */
             String filterQuery = "";
+            /* store 와 exhibition 컬렉션은 가격 및 픽업 날짜 정보 필드가 없음 */
             if(!collections[i].equals("store") && !collections[i].equals("exhibition")) filterQuery = wnUtils.setFilterQuery(search);
             wnsearch.setCollectionInfoValue(collections[i], FILTER_OPERATION, filterQuery);
 
@@ -166,7 +168,6 @@ public class SearchServiceImpl implements SearchService {
         searchResultMap.put("query", search.getQuery());
         searchResultMap.put("Version", "5.3.0");
         searchResultMap.put("typoQuery", typoQuery);
-        searchResultMap.put("selectStoreCode", search.getStoreCode());
 
         /* 컬렉션별 검색 결과 생성 */
         for (int i = 0; i < collections.length; i++) {
@@ -174,7 +175,7 @@ public class SearchServiceImpl implements SearchService {
             int resultCount = 0;
             int totalCount = 0;
 
-            /* 컬렉션 별 찜 목록 호출 */
+            /* 컬렉션 별 찜 목록 호출, 우딜, 와인25 */
             String itemCode = "";
             HashMap<String, String> expectedItemMap = new HashMap<>();
             if(search.getToken() != null) expectedItemMap = getExpectedItems(collections[i], search);
@@ -190,7 +191,7 @@ public class SearchServiceImpl implements SearchService {
                 totalCount = wnsearch.getResultTotalCount(collections[i]) < 0 ? 0 : wnsearch.getResultTotalCount(collections[i]);
             }
 
-            /* 오타 검색 결과값 확인용 카운트*/
+            /* 오타 검색 결과값 확인용 카운트 */
             allTotalCount += totalCount;
 
             JSONObject countJsonObject = new JSONObject();
@@ -203,7 +204,7 @@ public class SearchServiceImpl implements SearchService {
             List<Map<String, Map<String, String>>> fieldList = new ArrayList<>();
             for (int j = 0; j < resultCount; j++) {
                 Map<String , String> fieldMap = new HashMap<String , String>();
-                /* supermarketItemCode로 그룹화 하는 컬렉션 분기하여 결과값 생성 */
+                /* supermarketItemCode로 그룹화 하는 컬렉션을 선별하여 결과값 생성 */
                 for (String documentField : documentFields) {
                     if (!wncol.COLLECTION_INFO[collectionIndex][GROUP_BY].equals("")) {
                         fieldMap.put(documentField, wnsearch.getFieldInGroup(collections[i], documentField, j, 0));
@@ -214,12 +215,10 @@ public class SearchServiceImpl implements SearchService {
                     }
                     fieldMap.put("expectedItem", expectedItemMap.get(itemCode) == null ? "N" : "Y");
                 }
-
                 Map<String , Map<String , String>> fieldListMap = new HashMap<String , Map<String , String>>();
                 fieldListMap.put("field" , fieldMap);
                 fieldList.add(fieldListMap);
             }
-
             countJsonObject.put("Document", fieldList);
             documentset.put("CollectionId", collections[i]);
             documentset.put("Documentset", countJsonObject);
@@ -241,8 +240,8 @@ public class SearchServiceImpl implements SearchService {
         String url = "";
 
         if(collection.equals("wine25_gs")) url = "https://b2c-apigw.woodongsdev.com/refrigerator/v1/wine25/purchase/estimated/items";
-        else if(collection.equals("woodel_gs")) url = "https://b2c-apigw.woodongsdev.com/thepop/v1/wdelivery/expected/items?brandDivisionCode=02";
-        else if(collection.equals("woodel_mart")) url = "https://b2c-apigw.woodongsdev.com/thepop/v1/wdelivery/expected/items?brandDivisionCode=03";
+        else if(collection.equals("woodel_gs") || collection.equals("woodel_gs_pick")) url = "https://b2c-apigw.woodongsdev.com/thepop/v1/wdelivery/expected/items?brandDivisionCode=02";
+        else if(collection.equals("woodel_mart") || collection.equals("woodel_mart_pick")) url = "https://b2c-apigw.woodongsdev.com/thepop/v1/wdelivery/expected/items?brandDivisionCode=03";
         else return expectedItemMap;
 
         BufferedReader in = null;
@@ -251,20 +250,20 @@ public class SearchServiceImpl implements SearchService {
             HttpURLConnection con = (HttpURLConnection)obj.openConnection();
             con.setRequestMethod("GET");
             con.setRequestProperty("Authorization",search.getToken());
-            con.setConnectTimeout(4*100);
+            /* 찜목록 API 오류 시 검색 속도 문제로 타임아웃 설정 */
+            con.setConnectTimeout(3*100);
 
             in = new BufferedReader(new InputStreamReader(con.getInputStream(),"UTF-8"));
 
             String line;
             String expectedAPIResult = "";
-            while((line = in.readLine()) != null) {
-                expectedAPIResult += line;
-            }
+            while((line = in.readLine()) != null) expectedAPIResult += line;
 
             JSONParser parser = new JSONParser();
             JSONArray jsonArray ;
             JSONObject jsonObject = (JSONObject) parser.parse(expectedAPIResult);
 
+            /* wine25와 우딜 찜목록의 API Response 구조가 다름 */
             if(collection.equals("wine25_gs")){
                 jsonArray = (JSONArray) jsonObject.get("data");
             }else{

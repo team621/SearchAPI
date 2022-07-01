@@ -13,10 +13,18 @@ import com.gsretail.gst.b2e.search.search.model.Search;
  */
 public interface ChatBotService {
     /**
-     * 챗봇 검색 결과 호출.
+     * 챗봇 검색 결과 호출. (상품)
      *
      * @param search     검색 객체
      * @return 검색 결과 (JSON)
      */
     JSONObject getChatBotSearch(Search search);
+
+    /**
+     * 챗봇 검색 결과 호출. (매장)
+     *
+     * @param search     검색 객체
+     * @return 검색 결과 (JSON)
+     */
+    JSONObject getStoreSearch(Search search);
 }

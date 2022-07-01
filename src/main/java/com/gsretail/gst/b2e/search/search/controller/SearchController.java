@@ -36,29 +36,40 @@ public class SearchController {
      * 통합 검색 결과 호출.
      *
      * @param request the request
+     * @return the json object
      */
     @RequestMapping(value = "/search/v1/totalSearch", method = {RequestMethod.POST, RequestMethod.GET})
     public JSONObject getSearchResult(HttpServletRequest request){
         Search search = setSearchParameter(request, "total");
         search.setToken(request.getHeader("Authorization"));
 
-        JSONObject searchResultJson = searchService.getTotalSearch(search);
-
-        return searchResultJson;
+        return searchService.getTotalSearch(search);
     }
 
     /**
-     * 챗봇 검색 결과 호출.
+     * 챗봇 검색 결과 호출. (상품)
      *
      * @param request the request
+     * @return the json object
      */
     @RequestMapping(value = "/search/v1/chatBotSearch", method = {RequestMethod.POST, RequestMethod.GET})
     public JSONObject getChatBotSearchResult(HttpServletRequest request){
         Search search = setSearchParameter(request, "chatBot");
 
-        JSONObject searchResultJson = chatBotService.getChatBotSearch(search);
+        return chatBotService.getChatBotSearch(search);
+    }
 
-        return searchResultJson;
+    /**
+     * 챗봇 검색 결과 호출 (매장)
+     *
+     * @param request the request
+     * @return the json object
+     */
+    @RequestMapping(value = "/search/v1/storeSearch", method = {RequestMethod.POST, RequestMethod.GET})
+    public JSONObject getStoreSearch(HttpServletRequest request){
+        Search search = setSearchParameter(request, "chatBot");
+
+        return chatBotService.getStoreSearch(search);
     }
 
     /**
