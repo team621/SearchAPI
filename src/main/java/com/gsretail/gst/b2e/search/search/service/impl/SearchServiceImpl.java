@@ -33,7 +33,7 @@ public class SearchServiceImpl implements SearchService {
     /* 오타검색을 위한 전체 검색 결과 카운트 */
     int allTotalCount = 0;
     /* 디버깅 보기 설정 */
-    boolean isDebug = true;
+    boolean isDebug = false;
     /* 검색엔진 설정 객체 생성 */
     WNUtils wnUtils = new WNUtils();
     WNCollection wncol = new WNCollection();
@@ -171,58 +171,58 @@ public class SearchServiceImpl implements SearchService {
 
         /* 컬렉션별 검색 결과 생성 */
         for (int i = 0; i < collections.length; i++) {
-            JSONObject documentset = new JSONObject();
-            int resultCount = 0;
-            int totalCount = 0;
+                JSONObject documentset = new JSONObject();
+                int resultCount = 0;
+                int totalCount = 0;
 
-            /* 컬렉션 별 찜 목록 호출, 우딜, 와인25 */
-            String itemCode = "";
-            HashMap<String, String> expectedItemMap = new HashMap<>();
-            if(search.getToken() != null) expectedItemMap = getExpectedItems(collections[i], search);
+                /* 컬렉션 별 찜 목록 호출, 우딜, 와인25 */
+                String itemCode = "";
+                HashMap<String, String> expectedItemMap = new HashMap<>();
+                if(search.getToken() != null) expectedItemMap = getExpectedItems(collections[i], search);
 
-            /* 선택된 컬렉션이 WNCollection 몇번째 인지 index값 */
-            int collectionIndex = wnsearch.getCollIdx(collections[i]);
-            /* supermarketItemCode로 그룹화 하는 컬렉션 선별하여 검색 결과 count 생성 */
-            if (!wncol.COLLECTION_INFO[collectionIndex][GROUP_BY].equals("")) {
-                resultCount = wnsearch.getResultGroupCount(collections[i]) < 0 ? 0 : wnsearch.getResultGroupCount(collections[i]);
-                totalCount = wnsearch.getResultTotalGroupCount(collections[i]) < 0 ? 0 : wnsearch.getResultTotalGroupCount(collections[i]);
-            } else {
-                resultCount = wnsearch.getResultCount(collections[i]) < 0 ? 0 : wnsearch.getResultCount(collections[i]);
-                totalCount = wnsearch.getResultTotalCount(collections[i]) < 0 ? 0 : wnsearch.getResultTotalCount(collections[i]);
-            }
-
-            /* 오타 검색 결과값 확인용 카운트 */
-            allTotalCount += totalCount;
-
-            JSONObject countJsonObject = new JSONObject();
-            countJsonObject.put("resultCount", resultCount);
-            countJsonObject.put("totalCount", totalCount);
-
-            /* 선택된 컬렉션 documentField 값 생성 */
-            String[] documentFields = wncol.COLLECTION_INFO[collectionIndex][RESULT_FIELD].split(",");
-
-            List<Map<String, Map<String, String>>> fieldList = new ArrayList<>();
-            for (int j = 0; j < resultCount; j++) {
-                Map<String , String> fieldMap = new HashMap<String , String>();
-                /* supermarketItemCode로 그룹화 하는 컬렉션을 선별하여 결과값 생성 */
-                for (String documentField : documentFields) {
-                    if (!wncol.COLLECTION_INFO[collectionIndex][GROUP_BY].equals("")) {
-                        fieldMap.put(documentField, wnsearch.getFieldInGroup(collections[i], documentField, j, 0));
-                        itemCode = wnsearch.getFieldInGroup(collections[i], "itemCode", j, 0);
-                    } else {
-                        fieldMap.put(documentField, wnsearch.getField(collections[i], documentField, j, false));
-                        itemCode = wnsearch.getField(collections[i], "itemCode", j, false);
-                    }
-                    fieldMap.put("expectedItem", expectedItemMap.get(itemCode) == null ? "N" : "Y");
+                /* 선택된 컬렉션이 WNCollection 몇번째 인지 index값 */
+                int collectionIndex = wnsearch.getCollIdx(collections[i]);
+                /* supermarketItemCode로 그룹화 하는 컬렉션 선별하여 검색 결과 count 생성 */
+                if (!wncol.COLLECTION_INFO[collectionIndex][GROUP_BY].equals("")) {
+                    resultCount = wnsearch.getResultGroupCount(collections[i]) < 0 ? 0 : wnsearch.getResultGroupCount(collections[i]);
+                    totalCount = wnsearch.getResultTotalGroupCount(collections[i]) < 0 ? 0 : wnsearch.getResultTotalGroupCount(collections[i]);
+                } else {
+                    resultCount = wnsearch.getResultCount(collections[i]) < 0 ? 0 : wnsearch.getResultCount(collections[i]);
+                    totalCount = wnsearch.getResultTotalCount(collections[i]) < 0 ? 0 : wnsearch.getResultTotalCount(collections[i]);
                 }
-                Map<String , Map<String , String>> fieldListMap = new HashMap<String , Map<String , String>>();
-                fieldListMap.put("field" , fieldMap);
-                fieldList.add(fieldListMap);
-            }
-            countJsonObject.put("Document", fieldList);
-            documentset.put("CollectionId", collections[i]);
-            documentset.put("Documentset", countJsonObject);
-            collectionJsonArray.add(documentset);
+
+                /* 오타 검색 결과값 확인용 카운트 */
+                allTotalCount += totalCount;
+
+                JSONObject countJsonObject = new JSONObject();
+                countJsonObject.put("resultCount", resultCount);
+                countJsonObject.put("totalCount", totalCount);
+
+                /* 선택된 컬렉션 documentField 값 생성 */
+                String[] documentFields = wncol.COLLECTION_INFO[collectionIndex][RESULT_FIELD].split(",");
+
+                List<Map<String, Map<String, String>>> fieldList = new ArrayList<>();
+                for (int j = 0; j < resultCount; j++) {
+                    Map<String , String> fieldMap = new HashMap<String , String>();
+                    /* supermarketItemCode로 그룹화 하는 컬렉션을 선별하여 결과값 생성 */
+                    for (String documentField : documentFields) {
+                        if (!wncol.COLLECTION_INFO[collectionIndex][GROUP_BY].equals("")) {
+                            fieldMap.put(documentField, wnsearch.getFieldInGroup(collections[i], documentField, j, 0));
+                            itemCode = wnsearch.getFieldInGroup(collections[i], "itemCode", j, 0);
+                        } else {
+                            fieldMap.put(documentField, wnsearch.getField(collections[i], documentField, j, false));
+                            itemCode = wnsearch.getField(collections[i], "itemCode", j, false);
+                        }
+                        fieldMap.put("expectedItem", expectedItemMap.get(itemCode) == null ? "N" : "Y");
+                    }
+                    Map<String , Map<String , String>> fieldListMap = new HashMap<String , Map<String , String>>();
+                    fieldListMap.put("field" , fieldMap);
+                    fieldList.add(fieldListMap);
+                }
+                countJsonObject.put("Document", fieldList);
+                documentset.put("CollectionId", collections[i]);
+                documentset.put("Documentset", countJsonObject);
+                collectionJsonArray.add(documentset);
         }
         searchResultMap.put("Collection", collectionJsonArray);
 

@@ -60,7 +60,7 @@ public class ChatBotServiceImpl implements ChatBotService {
     @Override
     public JSONObject getStoreSearch(Search search) {
         JSONObject searchResult = new JSONObject();
-        String[] collections = {"store_chatBot"};
+        String[] collections = {"store"};
         String[] searchFields = null;
 
         /* 검색 객체 생성 */
@@ -103,20 +103,20 @@ public class ChatBotServiceImpl implements ChatBotService {
                 wnsearch.setCollectionInfoValue(collections[i], DATE_RANGE,  "1970/01/01,2030/01/01,-");
                 wnsearch.setCollectionInfoValue(collections[i], SORT_FIELD, search.getSort());
             }
-            if(collections[i].equals("store_chatBot")){
+            if(collections[i].equals("store")){
                 wnsearch.setCollectionInfoValue(collections[i], SEARCH_FIELD, "storeName,storePropertyBane");
             }else{
                 wnsearch.setCollectionInfoValue(collections[i], SEARCH_FIELD, "itemName,shortItemName");
             }
 
             wnsearch.setCollectionInfoValue(collections[i],CATEGORY_GROUPBY , "");
-            if(!collections[i].equals("store_chatBot")) {
+            if(!collections[i].equals("store")) {
                 wnsearch.setCollectionInfoValue(collections[i], GROUP_BY, "supermarketItemCode,1");
                 wnsearch.setCollectionInfoValue(collections[i], GROUP_SORT_FIELD, search.getSort());
             }
 
             /* 매장 검색 지역 코드 조건 */
-            if(!search.getTownCode().equals("") && collections[i].equals("store_chatBot")){
+            if(!search.getTownCode().equals("") && collections[i].equals("store")){
                 wnsearch.setCollectionInfoValue(collections[i], EXQUERY_FIELD, wnUtils.setExquery(search));
             }
         }
@@ -176,7 +176,7 @@ public class ChatBotServiceImpl implements ChatBotService {
         int resultCount = wnsearch.getResultCount(collection) < 0 ? 0 : wnsearch.getResultCount(collection);
         int totalCount = wnsearch.getResultTotalCount(collection) < 0 ? 0 : wnsearch.getResultTotalCount(collection);
 
-        String[] documentFields = wncol.COLLECTION_INFO[wnsearch.getCollIdx("store_chatBot")][RESULT_FIELD].split(",");
+        String[] documentFields = "storeName,storeAddress,storeTelno,saleBeginTime,saleEndTime,storePropertyBane,xCoordinates,yCoordinates,storePropertyCode".split(",");
 
         List<Map<String , String>> resultFieldList = new ArrayList<>();
 
