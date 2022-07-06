@@ -16,9 +16,15 @@ import static java.lang.System.getProperties;
  * 2022-06-07        USER       최초 생성
  */
 public class WNCollection {
-    static String SEARCH_IP="27.122.138.23";
+
+    /* 개발 */
+    //static String SEARCH_IP="27.122.138.23";
+    //static int SEARCH_PORT=5052;
+
+    /* 운영 */
+    static String SEARCH_IP="121.50.22.208";
     static int SEARCH_PORT=5052;
-    //운영
+
     public String[] COLLECTIONS = new String[]{"oneplus","thefresh","woodel_gs","woodel_gs_pick","woodel_mart","woodel_mart_pick","gs25_reservation","wine25_gs","giftcard","exhibition","store"};
     public String[] COLLECTIONS_NAME = new String[]{"oneplus","thefresh","woodel_gs","woodel_gs_pick","woodel_mart","woodel_mart_pick","gs25_reservation","wine25_gs","giftcard","exhibition","store"};
 
